@@ -24,18 +24,19 @@ class VisualCodingPupilInterface(BaseDataInterface):
             pupil_size_timestamps = v1_nwbfile["processing"]["brain_observatory_pipeline"]["PupilTracking"][
                 "pupil_size"
             ]["timestamps"]
-            chunks = min(pupil_size_data.shape[0], int(10e6 // pupil_size_data.dtype.itemsize))
+            data_chunks = min(pupil_size_data.shape[0], int(10e6 // pupil_size_data.dtype.itemsize))
+            timestamps_chunks = min(pupil_size_timestamps.shape[0], int(10e6 // pupil_size_timestamps.dtype.itemsize))
 
             pupil_time_series = list(
                 TimeSeries(
-                    name="PupilSize",
+                    name="pupil_size",
                     description="Size of pupil dilation in units pixels.",
-                    data=H5DataIO(data=pupil_size_data, compression=True, chunks=chunks),
-                    timestamps=H5DataIO(data=pupil_size_timestamps, compression=True, chunks=chunks),
+                    data=H5DataIO(data=pupil_size_data, compression=True, chunks=data_chunks),
+                    timestamps=H5DataIO(data=pupil_size_timestamps, compression=True, chunks=timestamps_chunks),
                     unit="px",
                 )
             )
-            pupil_tracking = PupilTracking(name="PupilTracking", time_series=pupil_time_series)
+            pupil_tracking = PupilTracking(time_series=pupil_time_series)
 
             behavior_module = get_module(nwbfile=nwbfile, name="behavior", description="Processed behavioral data.")
             behavior_module.add(pupil_tracking)
