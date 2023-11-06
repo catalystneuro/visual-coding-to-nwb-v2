@@ -14,7 +14,10 @@ for v1_nwbfile_path in v1_nwbfile_paths:
         session_type = v1_nwbfile["general"]["session_type"][()].decode("utf-8")
     all_duplication_testing.append((ophys_experiment_name, session_type))
 
-unique_session_types = set(session_type for _, session_type in all_duplication_testing)
+unique_session_types = defaultdict(list)
+for ophys_experiment_name, session_type in all_duplication_testing:
+    unique_session_types[session_type].append(ophys_experiment_name)
+
 
 unique_stripped_experiment_names = defaultdict(list)
 for ophys_experiment_name, _ in all_duplication_testing:
