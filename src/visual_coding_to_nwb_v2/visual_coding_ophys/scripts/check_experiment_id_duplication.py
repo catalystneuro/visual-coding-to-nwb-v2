@@ -12,4 +12,4 @@ for v1_nwbfile_path in v1_nwbfile_paths:
     all_duplication_testing.append((ophys_experiment_id, v1_nwbfile_path.stem))
 
 for ophys_experiment_id, filename in all_duplication_testing:
-    assert ophys_experiment_id==filename
+    assert ophys_experiment_id == filename
