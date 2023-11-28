@@ -12,7 +12,7 @@ from neuroconv.basedatainterface import BaseDataInterface
 class NaturalSceneStimulusInterface(BaseDataInterface):
     """Stimulus interface specific to the natural scenes for visual coding ophys conversion."""
 
-    def __init__(self, v1_nwbfile_path: Path):
+    def __init__(self, v1_nwbfile_path: str):
         super().__init__(v1_nwbfile_path=v1_nwbfile_path)
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
@@ -20,6 +20,10 @@ class NaturalSceneStimulusInterface(BaseDataInterface):
             # TODO - assess consistency of stim template types
             # TODO - the templates have a field of view set, but these would be more properties of an OpticalSeries
             #        but they also don't seem to be used at all in the SDK (FoV for ophys is used commonly though)
+
+            # Early exit based on template presence
+            if "natural_scenes_image_stack" not in v1_nwbfile["stimulus"]["templates"]:
+                return
 
             # Template
             natural_scenes_template_source = v1_nwbfile["stimulus"]["templates"]["natural_scenes_image_stack"]
@@ -36,12 +40,12 @@ class NaturalSceneStimulusInterface(BaseDataInterface):
                 source_images.shape[2],
             )
 
-            images = Images(
-                name="natural_scenes_template",
-                description="A collection of natural scenes presented to the subject.",
-                images=H5DataIO(data=source_images, compression=True, chunks=image_chunks),
-            )
-            nwbfile.add_stimulus_template(timeseries=images)
+            # all_images = Images(
+            #     name="natural_scenes_template",
+            #     description="A collection of natural scenes presented to the subject.",
+            #     images=[Image(H5DataIO(data=source_images, compression=True, chunks=image_chunks)],
+            # )
+            # nwbfile.add_stimulus_template(all_images)
 
             # Presentation
             # TODO - need to figure out a way to encode duration of a presentation since that did seem to vary

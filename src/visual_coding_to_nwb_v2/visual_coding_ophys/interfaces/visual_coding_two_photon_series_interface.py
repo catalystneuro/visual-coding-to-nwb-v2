@@ -1,6 +1,4 @@
 """Primary class for two photon series."""
-from pathlib import Path
-
 import numpy
 import h5py
 from pynwb import H5DataIO
@@ -11,10 +9,10 @@ from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.hdmf import SliceableDataChunkIterator
 
 
-class TwoPhotonSeriesInterface(BaseDataInterface):
+class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
     """Two photon calcium imaging interface for visual coding ophys conversion."""
 
-    def __init__(self, v1_nwbfile_path: Path, ophys_movie_path: Path):
+    def __init__(self, v1_nwbfile_path: str, ophys_movie_path: str):
         self.v1_nwbfile = h5py.File(name=v1_nwbfile_path, mode="r")
         self.ophys_movie = h5py.File(name=ophys_movie_path, mode="r")
         super().__init__(v1_nwbfile_path=v1_nwbfile_path, ophys_movie_path=ophys_movie_path)

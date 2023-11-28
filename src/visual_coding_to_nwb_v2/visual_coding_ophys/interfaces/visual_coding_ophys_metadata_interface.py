@@ -1,5 +1,4 @@
 """Primary class for grabbing experiment-specific metadata."""
-from pathlib import Path
 from datetime import datetime
 
 import h5py
@@ -11,7 +10,7 @@ from neuroconv.utils import DeepDict
 class VisualCodingMetadataInterface(BaseDataInterface):
     """General metadata interface for visual-coding-ophys conversion."""
 
-    def __init__(self, v1_nwbfile_path: Path):
+    def __init__(self, v1_nwbfile_path: str):
         super().__init__(v1_nwbfile_path=v1_nwbfile_path)
 
     def get_metadata(self) -> DeepDict:
@@ -20,7 +19,7 @@ class VisualCodingMetadataInterface(BaseDataInterface):
         with h5py.File(name=self.source_data["v1_nwbfile_path"], mode="r") as v1_nwbfile:
             metadata["NWBFile"]["session_start_time"] = datetime.strptime(
                 v1_nwbfile["session_start_time"][()].decode("utf-8"), "%a %b %d %H:%M:%S %Y"
-            )
+            ) # TODO: add timezone
             metadata["NWBFile"]["session_id"] = v1_nwbfile["general"]["ophys_experiment_id"][()].decode("utf-8")
             metadata["NWBFile"]["session_description"] = v1_nwbfile["session_description"][()].decode("utf-8") + "."
 

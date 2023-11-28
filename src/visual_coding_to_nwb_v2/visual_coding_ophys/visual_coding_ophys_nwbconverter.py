@@ -1,8 +1,15 @@
 """Primary NWBConverter class for this dataset."""
 from neuroconv import NWBConverter
 
-from .visual_coding_ophys_metadata_interface import VisualCodingMetadataInterface
-from .visual_coding_ophys_pupil_interface import VisualCodingPupilInterface
+from .interfaces import (
+    VisualCodingMetadataInterface,
+    EyeTrackingInterface,
+    PupilInterface,
+    RunningSpeedInterface,
+    NaturalMovieStimulusInterface,
+    NaturalSceneStimulusInterface,
+    # VisualCodingTwoPhotonSeriesInterface,
+)
 
 
 class VisualCodingOphysNWBConverter(NWBConverter):
@@ -10,5 +17,10 @@ class VisualCodingOphysNWBConverter(NWBConverter):
 
     data_interface_classes = dict(
         Metadata=VisualCodingMetadataInterface,
-        Pupil=VisualCodingPupilInterface,
+        EyeTracking=EyeTrackingInterface,
+        Pupil=PupilInterface,
+        RunningSpeed=RunningSpeedInterface,
+        NaturalMovieOne=NaturalMovieStimulusInterface,
+        # NaturalScene=NaturalSceneStimulusInterface,
+        # Raw=VisualCodingTwoPhotonSeriesInterface,
     )
