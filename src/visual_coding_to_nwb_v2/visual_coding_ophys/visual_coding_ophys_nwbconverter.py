@@ -9,6 +9,7 @@ from .interfaces import (
     NaturalMovieStimulusInterface,
     NaturalSceneStimulusInterface,
     # VisualCodingTwoPhotonSeriesInterface,
+    VisualCodingProcessedOphysInterface,
 )
 
 
@@ -23,4 +24,5 @@ class VisualCodingOphysNWBConverter(NWBConverter):
         NaturalMovieOne=NaturalMovieStimulusInterface,
         # NaturalScene=NaturalSceneStimulusInterface,
         # Raw=VisualCodingTwoPhotonSeriesInterface,
+        ProcessedOphys=VisualCodingProcessedOphysInterface,
     )

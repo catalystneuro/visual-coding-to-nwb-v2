@@ -24,11 +24,11 @@ class RunningSpeedInterface(BaseDataInterface):
         running_speed_source = processing_source["BehavioralTimeSeries"]["running_speed"]
 
         # x, y grid
-        running_speed_data = running_speed_source["data"]
+        running_speed_data = running_speed_source["data"][:]
         max_frames_per_chunk = int(10e6 / running_speed_data.dtype.itemsize)
         data_chunks = (min(running_speed_data.shape[0], max_frames_per_chunk),)
 
-        running_speed_timestamps = running_speed_source["timestamps"]
+        running_speed_timestamps = running_speed_source["timestamps"][:]
         timestamp_chunks = (
             min(running_speed_timestamps.shape[0], int(10e6 / running_speed_timestamps.dtype.itemsize)),
         )

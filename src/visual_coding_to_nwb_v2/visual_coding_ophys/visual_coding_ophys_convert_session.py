@@ -28,8 +28,8 @@ def convert_session(
 
 if __name__ == "__main__":
     # Parameters for conversion
-    data_folder_path = Path("G:/visual-coding/ophys_experiment_data")
-    output_folder_path = Path("G:/visual-coding/v2_nwbfiles")
+    data_folder_path = Path("F:/visual-coding/ophys_experiment_data")
+    output_folder_path = Path("F:/visual-coding/v2_nwbfiles")
     stub_test = False
 
     session_id = "496908818"

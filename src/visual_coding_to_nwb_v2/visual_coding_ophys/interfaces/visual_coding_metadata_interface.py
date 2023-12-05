@@ -1,10 +1,14 @@
 """Primary class for grabbing experiment-specific metadata."""
 from datetime import datetime
+from dateutil import tz
 
 import h5py
 from pynwb.file import NWBFile
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.utils import DeepDict
+
+
+SESSION_TYPE_MAPPING = dict(three_session_A=3)
 
 
 class VisualCodingMetadataInterface(BaseDataInterface):
@@ -17,10 +21,18 @@ class VisualCodingMetadataInterface(BaseDataInterface):
         metadata = super().get_metadata()
 
         with h5py.File(name=self.source_data["v1_nwbfile_path"], mode="r") as v1_nwbfile:
-            metadata["NWBFile"]["session_start_time"] = datetime.strptime(
+            session_start_time = datetime.strptime(
                 v1_nwbfile["session_start_time"][()].decode("utf-8"), "%a %b %d %H:%M:%S %Y"
-            ) # TODO: add timezone
-            metadata["NWBFile"]["session_id"] = v1_nwbfile["general"]["ophys_experiment_id"][()].decode("utf-8")
+            )
+            session_start_time = session_start_time.replace(tzinfo=tz.gettz("US/Pacific"))
+            metadata["NWBFile"]["session_start_time"] = session_start_time
+
+            experiment_id = v1_nwbfile["general"]["ophys_experiment_id"][()].decode("utf-8")
+            session_type = v1_nwbfile["general"]["session_type"][()].decode("utf-8")
+            reduced_session_type = session_type.split("_")[-1]
+            session_id = f"{experiment_id}-{reduced_session_type}"
+            metadata["NWBFile"]["session_id"] = session_id
+
             metadata["NWBFile"]["session_description"] = v1_nwbfile["session_description"][()].decode("utf-8") + "."
 
             metadata["NWBFile"]["experiment_description"] = v1_nwbfile["general"]["For more information"][()].decode(
@@ -32,10 +44,13 @@ class VisualCodingMetadataInterface(BaseDataInterface):
             )
             metadata["NWBFile"]["institution"] = v1_nwbfile["general"]["institution"][()].decode("utf-8")
 
-            # TODO: make lab-metadata extension for container ID and perhaps a couple other items
-            metadata["NWBFile"]["notes"] = "Container ID: " + v1_nwbfile["general"]["experiment_container_id"][
-                ()
-            ].decode("utf-8")
+            # TODO: If desired, could make lab-metadata extension for items included in these notes
+            container_id = v1_nwbfile["general"]["experiment_container_id"][()].decode("utf-8")
+            mouse_id = v1_nwbfile["general"]["specimen_name"][()].decode("utf-8").split("-")[-1]
+            notes = f"Container ID: {container_id}"
+            notes += f"\nMouse ID (from genotype white paper): {mouse_id}"
+            notes += f"\nSession type: {session_type}"
+            metadata["NWBFile"]["notes"] = notes
 
             metadata["Subject"]["subject_id"] = v1_nwbfile["general"]["subject"]["subject_id"][()].decode("utf-8")
             metadata["Subject"]["description"] = (

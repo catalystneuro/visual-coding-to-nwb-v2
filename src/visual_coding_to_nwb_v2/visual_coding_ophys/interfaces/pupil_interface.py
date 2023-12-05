@@ -7,6 +7,8 @@ from pynwb.behavior import PupilTracking
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
 
+from .shared_methods import add_eye_tracking_device
+
 
 class PupilInterface(BaseDataInterface):
     """Pupil tracking interface for visual coding ophys conversion."""
@@ -16,13 +18,16 @@ class PupilInterface(BaseDataInterface):
         self.v1_nwbfile = h5py.File(name=self.source_data["v1_nwbfile_path"], mode="r")
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
+        if "Camera" not in nwbfile.devices:
+            add_eye_tracking_device(nwbfile=nwbfile)
+
         processing_source = self.v1_nwbfile["processing"]["brain_observatory_pipeline"]
         if "PupilTracking" not in processing_source:
             return
-        pupil_size_data = processing_source["PupilTracking"]["pupil_size"]["data"]
+        pupil_size_data = processing_source["PupilTracking"]["pupil_size"]["data"][:]
         pupil_size_timestamps = self.v1_nwbfile["processing"]["brain_observatory_pipeline"]["PupilTracking"][
             "pupil_size"
-        ]["timestamps"]
+        ]["timestamps"][:]
         data_chunks = min(pupil_size_data.shape[0], int(10e6 // pupil_size_data.dtype.itemsize))
         timestamps_chunks = min(pupil_size_timestamps.shape[0], int(10e6 // pupil_size_timestamps.dtype.itemsize))
 
