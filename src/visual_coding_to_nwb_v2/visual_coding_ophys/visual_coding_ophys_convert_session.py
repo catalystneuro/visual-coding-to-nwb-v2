@@ -2,6 +2,12 @@
 from pathlib import Path
 from typing import Union
 
+from neuroconv.tools.nwb_helpers import (
+    configure_backend,
+    get_default_backend_configuration,
+    make_or_load_nwbfile,
+)
+
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 # from neuroconv.tools.nwb_helpers import
@@ -25,7 +31,20 @@ def convert_session(
     }
 
     converter = VisualCodingOphysNWBConverter(source_data=source_data)
-    converter.run_conversion(nwbfile_path=str(v2_nwbfile_path), overwrite=True)
+    metadata = converter.get_metadata()
+
+    with make_or_load_nwbfile(
+        nwbfile_path=v2_nwbfile_path,
+        metadata=metadata,
+        overwrite=True,
+        verbose=False,
+    ) as nwbfile_out:
+        converter.add_to_nwbfile(nwbfile=nwbfile_out, metadata=metadata)
+        default_backend_configuration = get_default_backend_configuration(nwbfile=nwbfile_out, backend="hdf5")
+        print(default_backend_configuration)
+        configure_backend(nwbfile=nwbfile_out, backend_configuration=default_backend_configuration)
+
+    # converter.run_conversion(nwbfile_path=str(v2_nwbfile_path), overwrite=True)
 
 
 if __name__ == "__main__":
