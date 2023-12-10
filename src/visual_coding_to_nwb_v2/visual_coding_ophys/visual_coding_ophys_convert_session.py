@@ -2,7 +2,11 @@
 from pathlib import Path
 from typing import Union
 
-from neuroconv.tools.nwb_helpers import get_default_backend_configuration, configure_backend, make_or_load_nwbfile
+from neuroconv.tools.nwb_helpers import (
+    configure_backend,
+    get_default_backend_configuration,
+    make_or_load_nwbfile,
+)
 
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
