@@ -24,3 +24,8 @@ extend-exclude = '''
 profile = "black"
 reverse_relative = true
 known_first_party = ["visual_coding_to_nwb_v2"]
+
+[tool.isort]
+profile = "black"
+reverse_relative = true
+known_first_party = ["visual_coding_to_nwb_v2"]
