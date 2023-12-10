@@ -2,9 +2,11 @@
 from pathlib import Path
 from typing import Union
 
+from visual_coding_to_nwb_v2.visual_coding_ophys import \
+    VisualCodingOphysNWBConverter
+
 # from neuroconv.tools.nwb_helpers import
 
-from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 
 def convert_session(

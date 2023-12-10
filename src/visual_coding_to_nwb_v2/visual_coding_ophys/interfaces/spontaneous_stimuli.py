@@ -1,7 +1,7 @@
 """Primary class for stimulus data specific to spontaneous stimuli."""
 import h5py
-from pynwb.file import NWBFile, DynamicTable
 from neuroconv.basedatainterface import BaseDataInterface
+from pynwb.file import DynamicTable, NWBFile
 
 
 class SpontaneousStimuliInterface(BaseDataInterface):

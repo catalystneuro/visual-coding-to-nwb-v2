@@ -1,16 +1,19 @@
 """Exposed imports for visual_coding_ophys.interfaces submodule."""
-from .visual_coding_metadata_interface import VisualCodingMetadataInterface
+from .drifting_grating_stimuli import DriftingGratingStimuliInterface
 from .eye_tracking_interface import EyeTrackingInterface
-from .pupil_interface import PupilInterface
-from .running_speed_interface import RunningSpeedInterface
+from .locally_sparse_noise_stimulus_interface import \
+    LocallySparseNoiseStimulusInterface
 from .natural_movie_stimulus_interface import NaturalMovieStimulusInterface
 from .natural_scenes_stimulus_interface import NaturalSceneStimulusInterface
-from .visual_coding_two_photon_series_interface import VisualCodingTwoPhotonSeriesInterface
-from .visual_coding_processed_ophys_interface import VisualCodingProcessedOphysInterface
+from .pupil_interface import PupilInterface
+from .running_speed_interface import RunningSpeedInterface
 from .spontaneous_stimuli import SpontaneousStimuliInterface
-from .locally_sparse_noise_stimulus_interface import LocallySparseNoiseStimulusInterface
 from .static_grating_stimuli import StaticGratingStimuliInterface
-from .drifting_grating_stimuli import DriftingGratingStimuliInterface
+from .visual_coding_metadata_interface import VisualCodingMetadataInterface
+from .visual_coding_processed_ophys_interface import \
+    VisualCodingProcessedOphysInterface
+from .visual_coding_two_photon_series_interface import \
+    VisualCodingTwoPhotonSeriesInterface
 
 __all__ = [
     "VisualCodingMetadataInterface",

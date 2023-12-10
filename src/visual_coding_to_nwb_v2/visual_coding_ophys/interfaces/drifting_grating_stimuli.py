@@ -1,7 +1,7 @@
 """Primary class for stimulus data specific to drifting gratings."""
 import h5py
-from pynwb.file import NWBFile, TimeIntervals
 from neuroconv.basedatainterface import BaseDataInterface
+from pynwb.file import NWBFile, TimeIntervals
 
 
 class DriftingGratingStimuliInterface(BaseDataInterface):

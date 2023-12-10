@@ -1,10 +1,10 @@
 """Primary class for stimulus data specific to locally sparse images."""
-import numpy
 import h5py
+import numpy
+from neuroconv.basedatainterface import BaseDataInterface
 from pynwb import H5DataIO
 from pynwb.file import NWBFile
-from pynwb.image import Images, Image, IndexSeries
-from neuroconv.basedatainterface import BaseDataInterface
+from pynwb.image import Image, Images, IndexSeries
 
 
 class LocallySparseNoiseStimulusInterface(BaseDataInterface):

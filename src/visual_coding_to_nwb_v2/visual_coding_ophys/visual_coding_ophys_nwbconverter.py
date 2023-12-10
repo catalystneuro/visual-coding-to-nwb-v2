@@ -1,20 +1,12 @@
 """Primary NWBConverter class for this dataset."""
 from neuroconv import NWBConverter
 
-from .interfaces import (
-    # VisualCodingTwoPhotonSeriesInterface,
-    VisualCodingMetadataInterface,
-    EyeTrackingInterface,
-    PupilInterface,
-    RunningSpeedInterface,
-    NaturalMovieStimulusInterface,
-    NaturalSceneStimulusInterface,
-    SpontaneousStimuliInterface,
-    LocallySparseNoiseStimulusInterface,
-    StaticGratingStimuliInterface,
-    DriftingGratingStimuliInterface,
-    VisualCodingProcessedOphysInterface,
-)
+from .interfaces import (  # VisualCodingTwoPhotonSeriesInterface,
+    DriftingGratingStimuliInterface, EyeTrackingInterface,
+    LocallySparseNoiseStimulusInterface, NaturalMovieStimulusInterface,
+    NaturalSceneStimulusInterface, PupilInterface, RunningSpeedInterface,
+    SpontaneousStimuliInterface, StaticGratingStimuliInterface,
+    VisualCodingMetadataInterface, VisualCodingProcessedOphysInterface)
 
 
 class VisualCodingOphysNWBConverter(NWBConverter):

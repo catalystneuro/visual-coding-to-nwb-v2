@@ -1,6 +1,6 @@
-from pathlib import Path
 from collections import defaultdict
-from typing import Union, List
+from pathlib import Path
+from typing import List, Union
 
 import h5py
 from natsort.natsort import natsorted

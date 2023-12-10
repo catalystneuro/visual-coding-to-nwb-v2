@@ -1,10 +1,10 @@
 """Primary class for stimulus data specific to natural movies."""
-import numpy
 import h5py
+import numpy
+from neuroconv.basedatainterface import BaseDataInterface
 from pynwb import H5DataIO
 from pynwb.file import NWBFile
 from pynwb.image import ImageSeries, IndexSeries
-from neuroconv.basedatainterface import BaseDataInterface
 
 from .shared_methods import add_stimulus_device
 

@@ -1,12 +1,13 @@
 """Primary class for two photon series."""
-import numpy
 import h5py
-from pynwb import H5DataIO
-from pynwb.file import NWBFile
-from pynwb.ophys import TwoPhotonSeries, ImagingPlane
-from pynwb.testing.mock.ophys import mock_ImagingPlane, mock_Device  # TODO: temporary
+import numpy
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.hdmf import SliceableDataChunkIterator
+from pynwb import H5DataIO
+from pynwb.file import NWBFile
+from pynwb.ophys import ImagingPlane, TwoPhotonSeries
+from pynwb.testing.mock.ophys import (mock_Device,  # TODO: temporary
+                                      mock_ImagingPlane)
 
 
 class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
