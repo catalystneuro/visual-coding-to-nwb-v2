@@ -1,10 +1,10 @@
 """Primary class for eye tracking data."""
 import h5py
-from pynwb import H5DataIO
-from pynwb.file import NWBFile
-from pynwb.behavior import EyeTracking, SpatialSeries, CompassDirection
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
+from pynwb import H5DataIO
+from pynwb.behavior import CompassDirection, EyeTracking, SpatialSeries
+from pynwb.file import NWBFile
 
 from .shared_methods import add_eye_tracking_device
 

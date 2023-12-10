@@ -1,12 +1,18 @@
 """Primary class for two photon series."""
 import h5py
-from pynwb import H5DataIO
-from pynwb.file import NWBFile
-from pynwb.ophys import ImageSegmentation, PlaneSegmentation, Fluorescence, RoiResponseSeries, DfOverF
-from pynwb.image import Images, Image
 from hdmf.common import DynamicTable, VectorData
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
+from pynwb import H5DataIO
+from pynwb.file import NWBFile
+from pynwb.image import Image, Images
+from pynwb.ophys import (
+    DfOverF,
+    Fluorescence,
+    ImageSegmentation,
+    PlaneSegmentation,
+    RoiResponseSeries,
+)
 
 from .shared_methods import add_imaging_device, add_imaging_plane
 
