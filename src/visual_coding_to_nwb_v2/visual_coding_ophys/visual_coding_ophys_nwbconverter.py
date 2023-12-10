@@ -2,13 +2,17 @@
 from neuroconv import NWBConverter
 
 from .interfaces import (
+    # VisualCodingTwoPhotonSeriesInterface,
     VisualCodingMetadataInterface,
     EyeTrackingInterface,
     PupilInterface,
     RunningSpeedInterface,
     NaturalMovieStimulusInterface,
     NaturalSceneStimulusInterface,
-    # VisualCodingTwoPhotonSeriesInterface,
+    SpontaneousStimuliInterface,
+    LocallySparseNoiseStimulusInterface,
+    StaticGratingStimuliInterface,
+    DriftingGratingStimuliInterface,
     VisualCodingProcessedOphysInterface,
 )
 
@@ -17,12 +21,16 @@ class VisualCodingOphysNWBConverter(NWBConverter):
     """Primary conversion class for this dataset."""
 
     data_interface_classes = dict(
+        # Raw=VisualCodingTwoPhotonSeriesInterface,
         Metadata=VisualCodingMetadataInterface,
         EyeTracking=EyeTrackingInterface,
         Pupil=PupilInterface,
         RunningSpeed=RunningSpeedInterface,
-        NaturalMovieOne=NaturalMovieStimulusInterface,
-        # NaturalScene=NaturalSceneStimulusInterface,
-        # Raw=VisualCodingTwoPhotonSeriesInterface,
+        NaturalMovies=NaturalMovieStimulusInterface,
+        NaturalScenes=NaturalSceneStimulusInterface,
+        SpontaneousStimuli=SpontaneousStimuliInterface,
+        LocallySparseStimuli=LocallySparseNoiseStimulusInterface,
+        StaticGratingStimuli=StaticGratingStimuliInterface,
+        DriftingGratingStimuli=DriftingGratingStimuliInterface,
         ProcessedOphys=VisualCodingProcessedOphysInterface,
     )

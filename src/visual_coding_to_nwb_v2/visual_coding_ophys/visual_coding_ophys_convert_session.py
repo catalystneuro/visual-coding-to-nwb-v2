@@ -2,6 +2,8 @@
 from pathlib import Path
 from typing import Union
 
+# from neuroconv.tools.nwb_helpers import
+
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 
@@ -32,7 +34,8 @@ if __name__ == "__main__":
     output_folder_path = Path("F:/visual-coding/v2_nwbfiles")
     stub_test = False
 
-    session_id = "496908818"
+    # session_id = "496908818"
+    session_id = "679697901"  # Example of locally sparse
 
     convert_session(
         session_id=session_id,

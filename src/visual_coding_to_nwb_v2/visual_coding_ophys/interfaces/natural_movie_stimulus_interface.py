@@ -25,9 +25,15 @@ class NaturalMovieStimulusInterface(BaseDataInterface):
         stimulus_device = nwbfile.devices["StimulusDisplay"]
 
         possible_template_name_map = dict(
-            natural_movie_one_image_stack="natural_movie_one", natural_movie_two_image_stack="natural_movie_two"
+            natural_movie_one_image_stack="natural_movie_one",
+            natural_movie_two_image_stack="natural_movie_two",
+            natural_movie_three_image_stack="natural_movie_two_three",
         )
-        possible_presentation_names = ["natural_movie_one_stimulus", "natural_movie_two_stimulus"]
+        possible_presentation_names = [
+            "natural_movie_one_stimulus",
+            "natural_movie_two_stimulus",
+            "natural_movie_three_stimulus",
+        ]
 
         for (source_name, image_series_name), presentation_name in zip(
             possible_template_name_map.items(), possible_presentation_names
