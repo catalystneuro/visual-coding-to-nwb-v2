@@ -18,13 +18,13 @@ class LocallySparseNoiseStimulusInterface(BaseDataInterface):
 
         for name_variation in name_variations:
             presentation_name = f"locally_sparse_noise{name_variation}_stimulus"
-            template_name = f"locally_sparse_noise{name_variation}_image_stack"
 
             if presentation_name not in self.v1_nwbfile["stimulus"]["presentation"]:
                 continue
 
             # Template
-            template_source = self.v1_nwbfile["stimulus"]["templates"][template_name]
+            template_source_name = f"locally_sparse_noise{name_variation}_image_stack"
+            template_source = self.v1_nwbfile["stimulus"]["templates"][template_source_name]
 
             # Data should always be able to fit into RAM
             source_images = template_source["data"][:]
@@ -37,17 +37,18 @@ class LocallySparseNoiseStimulusInterface(BaseDataInterface):
             #     source_images.shape[2],
             # )
 
+            images = [
+                Image(
+                    name=f"LocallySparseImage{image_index}",
+                    description="A locally sparse image presented to the subject.",
+                    data=source_images[image_index, :, :],
+                )
+                for image_index in range(source_images.shape[0])
+            ]
             all_images = Images(
-                name=template_name,
+                name=f"locally_sparse_noise{name_variation}_template",
                 description="A collection of locally sparse noise images presented to the subject.",
-                images=[
-                    Image(
-                        name=f"LocallySparseImage{image_index}",
-                        description="A locally sparse image presented to the subject.",
-                        data=source_images[image_index, :, :],
-                    )
-                    for image_index in range(source_images.shape[0])
-                ],
+                images=images,
             )
             nwbfile.add_stimulus_template(all_images)
 
@@ -56,13 +57,14 @@ class LocallySparseNoiseStimulusInterface(BaseDataInterface):
 
             # Original dtype was int64, but there will never be negative values
             # and the were only be at most hundreds of templates
-            natural_scenes_presentation_data = numpy.array(presentation_source["data"], dtype="uint16")
+            # Would go with uint16, but HDMF coerces to uint32 anyway
+            natural_scenes_presentation_data = numpy.array(presentation_source["data"], dtype="uint32")
             # max_frames_per_chunk = int(10e6 / natural_scenes_presentation_data.dtype.itemsize)
             # natural_scenes_presentation_data_chunks = min(
             #     natural_scenes_presentation_data.shape[0], max_frames_per_chunk
             # )
 
-            natural_scenes_presentation_timestamps = presentation_source["timestamps"]
+            natural_scenes_presentation_timestamps = presentation_source["timestamps"][:]
             # timestamp_chunks = min(
             #     natural_scenes_presentation_timestamps.shape[0],
             #     int(10e6 / natural_scenes_presentation_timestamps.dtype.itemsize),

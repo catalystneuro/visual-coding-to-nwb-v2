@@ -42,3 +42,6 @@ class DriftingGratingStimuliInterface(BaseDataInterface):
                 temporal_frequency=temporal_frequency,
                 blank_sweep=blank_sweep,
             )
+
+        # TODO: when NWB Schema allows, add these to stimuli
+        nwbfile.add_acquisition(drifting_gratings)

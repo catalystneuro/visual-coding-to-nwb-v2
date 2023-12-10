@@ -6,7 +6,7 @@ from .natural_movie_stimulus_interface import NaturalMovieStimulusInterface
 from .natural_scenes_stimulus_interface import NaturalSceneStimulusInterface
 from .pupil_interface import PupilInterface
 from .running_speed_interface import RunningSpeedInterface
-from .spontaneous_stimuli import SpontaneousStimuliInterface
+from .spontaneous_stimulus import SpontaneousStimulusInterface
 from .static_grating_stimuli import StaticGratingStimuliInterface
 from .visual_coding_metadata_interface import VisualCodingMetadataInterface
 from .visual_coding_processed_ophys_interface import VisualCodingProcessedOphysInterface
@@ -23,7 +23,7 @@ __all__ = [
     "NaturalSceneStimulusInterface",
     "VisualCodingTwoPhotonSeriesInterface",
     "VisualCodingProcessedOphysInterface",
-    "SpontaneousStimuliInterface",
+    "SpontaneousStimulusInterface",
     "LocallySparseNoiseStimulusInterface",
     "StaticGratingStimuliInterface",
     "DriftingGratingStimuliInterface",

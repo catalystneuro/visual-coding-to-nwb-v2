@@ -40,3 +40,6 @@ class StaticGratingStimuliInterface(BaseDataInterface):
                 spatial_frequency=spatial_frequency,
                 phase=phase,
             )
+
+        # TODO: when NWB Schema allows, add these to stimuli
+        nwbfile.add_acquisition(static_gratings)
