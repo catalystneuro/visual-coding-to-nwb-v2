@@ -6,8 +6,7 @@ from neuroconv.tools.hdmf import SliceableDataChunkIterator
 from pynwb import H5DataIO
 from pynwb.file import NWBFile
 from pynwb.ophys import ImagingPlane, TwoPhotonSeries
-from pynwb.testing.mock.ophys import (mock_Device,  # TODO: temporary
-                                      mock_ImagingPlane)
+from pynwb.testing.mock.ophys import mock_Device, mock_ImagingPlane  # TODO: temporary
 
 
 class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):

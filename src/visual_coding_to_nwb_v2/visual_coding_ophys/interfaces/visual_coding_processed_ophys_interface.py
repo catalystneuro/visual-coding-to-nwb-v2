@@ -6,8 +6,13 @@ from neuroconv.tools.nwb_helpers import get_module
 from pynwb import H5DataIO
 from pynwb.file import NWBFile
 from pynwb.image import Image, Images
-from pynwb.ophys import (DfOverF, Fluorescence, ImageSegmentation,
-                         PlaneSegmentation, RoiResponseSeries)
+from pynwb.ophys import (
+    DfOverF,
+    Fluorescence,
+    ImageSegmentation,
+    PlaneSegmentation,
+    RoiResponseSeries,
+)
 
 from .shared_methods import add_imaging_device, add_imaging_plane
 
