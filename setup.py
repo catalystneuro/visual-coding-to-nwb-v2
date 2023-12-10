@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 requirements_file_path = Path(__file__).parent / "requirements.txt"
 with open(requirements_file_path) as file:

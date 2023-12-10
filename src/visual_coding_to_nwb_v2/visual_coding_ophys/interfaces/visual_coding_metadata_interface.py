@@ -1,12 +1,11 @@
 """Primary class for grabbing experiment-specific metadata."""
 from datetime import datetime
-from dateutil import tz
 
 import h5py
-from pynwb.file import NWBFile
+from dateutil import tz
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.utils import DeepDict
-
+from pynwb.file import NWBFile
 
 SESSION_TYPE_MAPPING = dict(three_session_A=3)
 

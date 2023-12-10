@@ -6,6 +6,8 @@ from neuroconv.tools.nwb_helpers import get_default_backend_configuration, confi
 
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
+# from neuroconv.tools.nwb_helpers import
+
 
 def convert_session(
     session_id: str, data_folder_path: Union[str, Path], output_folder_path: Union[str, Path], stub_test: bool = False

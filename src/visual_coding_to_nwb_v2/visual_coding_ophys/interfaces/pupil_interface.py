@@ -1,11 +1,11 @@
 """Primary class for pupil data."""
 import h5py
-from pynwb import H5DataIO
-from pynwb.file import NWBFile
-from pynwb.base import TimeSeries
-from pynwb.behavior import PupilTracking
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
+from pynwb import H5DataIO
+from pynwb.base import TimeSeries
+from pynwb.behavior import PupilTracking
+from pynwb.file import NWBFile
 
 from .shared_methods import add_eye_tracking_device
 

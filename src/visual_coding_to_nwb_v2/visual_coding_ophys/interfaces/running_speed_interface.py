@@ -1,10 +1,10 @@
 """Primary class for running speed data."""
 import h5py
-from pynwb import H5DataIO, TimeSeries
-from pynwb.file import NWBFile
-from pynwb.behavior import BehavioralTimeSeries
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
+from pynwb import H5DataIO, TimeSeries
+from pynwb.behavior import BehavioralTimeSeries
+from pynwb.file import NWBFile
 
 
 class RunningSpeedInterface(BaseDataInterface):
