@@ -1,4 +1,5 @@
 """Primary class for stimulus data specific to static gratings."""
+
 import h5py
 from neuroconv.basedatainterface import BaseDataInterface
 from pynwb.file import NWBFile, TimeIntervals
