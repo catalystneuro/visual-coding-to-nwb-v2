@@ -1,4 +1,5 @@
 """Primary class for stimulus data specific to locally sparse images."""
+
 import h5py
 import numpy
 from neuroconv.basedatainterface import BaseDataInterface

@@ -1,4 +1,5 @@
 """Primary class for two photon series."""
+
 import h5py
 import numpy
 from neuroconv.basedatainterface import BaseDataInterface

@@ -1,4 +1,5 @@
 """Primary class for pupil data."""
+
 import h5py
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module

@@ -1,4 +1,5 @@
 """Primary class for two photon series."""
+
 import h5py
 from hdmf.common import DynamicTable, VectorData
 from neuroconv.basedatainterface import BaseDataInterface
