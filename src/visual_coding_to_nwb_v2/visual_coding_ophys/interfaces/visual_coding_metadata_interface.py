@@ -29,7 +29,7 @@ class VisualCodingMetadataInterface(BaseDataInterface):
             experiment_id = v1_nwbfile["general"]["ophys_experiment_id"][()].decode("utf-8")
             session_type = v1_nwbfile["general"]["session_type"][()].decode("utf-8")
             reduced_session_type = session_type.split("_")[-1]
-            session_id = f"{experiment_id}-{reduced_session_type}"
+            session_id = f"{experiment_id}-Stim{reduced_session_type}"
             metadata["NWBFile"]["session_id"] = session_id
 
             metadata["NWBFile"]["session_description"] = v1_nwbfile["session_description"][()].decode("utf-8") + "."
@@ -56,7 +56,7 @@ class VisualCodingMetadataInterface(BaseDataInterface):
                 v1_nwbfile["general"]["subject"]["description"][()].decode("utf-8") + "."
             )
             age_string = v1_nwbfile["general"]["subject"]["age"][()].decode("utf-8")
-            days_old = age_string.split(" ")  # really need to check how consistent this is...
+            days_old = age_string.split(" ")[0]  # TODO: thoroughly check consistency
             metadata["Subject"]["age"] = f"P{days_old}D"
             sex_string = v1_nwbfile["general"]["subject"]["sex"][()].decode(
                 "utf-8"

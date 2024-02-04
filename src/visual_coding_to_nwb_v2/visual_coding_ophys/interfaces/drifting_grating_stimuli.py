@@ -22,7 +22,8 @@ class DriftingGratingStimuliInterface(BaseDataInterface):
             description="Parameterizations of visual drifting gratings shown to the subject.",
         )
         drifting_gratings.add_column(
-            name="orientation", description="The angle of the line"  # TODO: angle relative to what?
+            name="orientation",
+            description="Direction of motion of the grating in degrees.",  # TODO: angle relative to what?
         )
         drifting_gratings.add_column(name="temporal_frequency", description="")
         drifting_gratings.add_column(name="blank_sweep", description="")

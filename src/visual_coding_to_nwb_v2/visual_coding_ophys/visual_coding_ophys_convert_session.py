@@ -42,9 +42,6 @@ def convert_session(
         converter.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
         default_backend_configuration = get_default_backend_configuration(nwbfile=nwbfile, backend="hdf5")
 
-        with open(file=f"C:/Users/Raven/Downloads/backend_configuration_{session_id}.txt", mode="w") as io:
-            io.writelines(str(default_backend_configuration))
-
         configure_backend(nwbfile=nwbfile, backend_configuration=default_backend_configuration)
 
 

@@ -21,7 +21,7 @@ class StaticGratingStimuliInterface(BaseDataInterface):
             name="static_gratings", description="Parameterizations of visual non-moving gratings shown to the subject."
         )
         static_gratings.add_column(
-            name="orientation", description="The angle of the line"  # TODO: angle relative to what?
+            name="orientation", description="The angle of the line in degrees."  # TODO: angle relative to what?
         )
         static_gratings.add_column(name="spatial_frequency", description="")
         static_gratings.add_column(name="phase", description="")
