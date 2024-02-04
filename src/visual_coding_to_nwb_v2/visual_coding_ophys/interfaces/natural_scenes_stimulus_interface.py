@@ -1,4 +1,5 @@
 """Primary class for stimulus data specific to natural scenes."""
+
 import h5py
 import numpy
 from neuroconv.basedatainterface import BaseDataInterface

@@ -1,4 +1,5 @@
 """Common functions for adding device/imaging plane used by both the 2P and processed ophys interfaces."""
+
 from typing import Literal
 
 import numpy

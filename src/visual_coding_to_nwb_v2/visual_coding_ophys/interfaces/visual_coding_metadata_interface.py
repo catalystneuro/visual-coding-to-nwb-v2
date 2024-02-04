@@ -1,4 +1,5 @@
 """Primary class for grabbing experiment-specific metadata."""
+
 from datetime import datetime
 
 import h5py
