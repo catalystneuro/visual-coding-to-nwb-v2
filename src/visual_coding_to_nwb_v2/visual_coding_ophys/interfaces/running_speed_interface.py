@@ -37,7 +37,7 @@ class RunningSpeedInterface(BaseDataInterface):
         running_speed_time_series = TimeSeries(
             name="running_speed",
             description=(
-                "Velocity of the running wheel. Mice were positioned on a running disk during the imaging sessions, "
+                "Velocity of the subject over time. Mice were positioned on a running disk during the imaging sessions, "
                 "and a magnetic shaft encoder (US Digital) attached to this disk recorded the running speed of the "
                 "mouse during the experiment at 60 samples per second. The running speed was down-sampled to match the "
                 "timing of the 2-photon imaging (30 Hz)."
