@@ -59,20 +59,10 @@ class NaturalSceneStimulusInterface(BaseDataInterface):
         # and the were only be at most hundreds of templates
         # Would go with uint16, but HDMF coerces to uint32 anyway
         natural_scenes_presentation_data = numpy.array(natural_scenes_presentation_source["data"], dtype="uint32")
-        # max_frames_per_chunk = int(10e6 / natural_scenes_presentation_data.dtype.itemsize)
-        # natural_scenes_presentation_data_chunks = (min(natural_scenes_presentation_data.shape[0], max_frames_per_chunk)
-
         natural_scenes_presentation_timestamps = natural_scenes_presentation_source["timestamps"][:]
-        # timestamp_chunks = min(
-        #     natural_scenes_presentation_timestamps.shape[0],
-        #     int(10e6 / natural_scenes_presentation_timestamps.dtype.itemsize),
-        # )
 
         # The data consists of many repeated presentations, so an IndexSeries is ideal
-        # However, there is also a duration at which each image was presented
-        # As well as potentially other metadata (hardcoded in the Allen SDK) similar to an OpticalSeries
-        # TODO: Since no data type is ideal, probably best to include this in an extension
-        # Will just add to description when constant for now... but that doesn't usually seem to be the case...
+        # However, there is also a duration at which each image was presented...
         index_series_description = "The order and timing for presentation of the natural scene templates."
 
         unique_frame_duration = numpy.unique(numpy.diff(natural_scenes_presentation_source["frame_duration"]))

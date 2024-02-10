@@ -3,7 +3,6 @@
 import h5py
 import numpy
 from neuroconv.basedatainterface import BaseDataInterface
-from pynwb import H5DataIO
 from pynwb.file import NWBFile
 from pynwb.image import ImageSeries, IndexSeries
 
@@ -18,9 +17,6 @@ class NaturalMovieStimulusInterface(BaseDataInterface):
         self.v1_nwbfile = h5py.File(name=self.source_data["v1_nwbfile_path"], mode="r")
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        # TODO - assess consistency of stim template types
-        # TODO - the templates have a field of view set, but these would be more properties of an OpticalSeries
-        #        but they also don't seem to be used at all in the SDK (FoV for ophys is used commonly though)
         if "StimulusDisplay" not in nwbfile.devices:
             add_stimulus_device(nwbfile=nwbfile)
         stimulus_device = nwbfile.devices["StimulusDisplay"]
@@ -44,21 +40,12 @@ class NaturalMovieStimulusInterface(BaseDataInterface):
 
             # Template
             natural_movie_template_source = self.v1_nwbfile["stimulus"]["templates"][source_name]
-
             natural_movie_data = natural_movie_template_source["data"][:]
-            max_frames_per_chunk = int(
-                10e6 / (natural_movie_data.dtype.itemsize * natural_movie_data.shape[1] * natural_movie_data.shape[2])
-            )
-            movie_chunks = (
-                min(natural_movie_data.shape[0], max_frames_per_chunk),
-                natural_movie_data.shape[1],
-                natural_movie_data.shape[2],
-            )
 
             image_series = ImageSeries(
                 name=image_series_name,
                 description="A natural movie presented to the subject.",
-                data=H5DataIO(data=natural_movie_data, compression=True, chunks=movie_chunks),
+                data=natural_movie_data,
                 unit="n.a.",
                 # Closest core approximation to their ImageStack that allows efficient packaging of movie
                 starting_time=numpy.nan,
@@ -74,31 +61,14 @@ class NaturalMovieStimulusInterface(BaseDataInterface):
             # and the were only be at most thousands of frames in the template movies...
             # However, minimal data type for IndexSeries data is uint32, otherwise PyNWB throws warning
             natural_movie_presentation_data = numpy.array(natural_movie_presentation_source["data"][:], dtype="uint32")
-            max_frames_per_chunk = int(10e6 / natural_movie_presentation_data.dtype.itemsize)
-            natural_movie_presentation_data_chunks = (
-                min(natural_movie_presentation_data.shape[0], max_frames_per_chunk),
-            )
-
             natural_movie_presentation_timestamps = natural_movie_presentation_source["timestamps"][:]
-            timestamp_chunks = (
-                min(
-                    natural_movie_presentation_timestamps.shape[0],
-                    int(10e6 / natural_movie_presentation_timestamps.dtype.itemsize),
-                ),
-            )
 
             index_series = IndexSeries(
                 name=presentation_name,
                 description="The order and timing for presentation of frames from the the natural movie templates.",
-                data=H5DataIO(
-                    data=natural_movie_presentation_data,
-                    compression=True,
-                    chunks=natural_movie_presentation_data_chunks,
-                ),
+                data=natural_movie_presentation_data,
                 indexed_timeseries=image_series,
                 unit="n.a.",
-                timestamps=H5DataIO(
-                    data=natural_movie_presentation_timestamps, compression=True, chunks=timestamp_chunks
-                ),
+                timestamps=natural_movie_presentation_timestamps,
             )
             nwbfile.add_stimulus(timeseries=index_series)

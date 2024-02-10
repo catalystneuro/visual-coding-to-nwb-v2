@@ -29,14 +29,6 @@ class LocallySparseNoiseStimulusInterface(BaseDataInterface):
 
             # Data should always be able to fit into RAM
             source_images = template_source["data"][:]
-            # max_frames_per_chunk = int(
-            #     10e6 / (source_images.dtype.itemsize * source_images.shape[1] * source_images.shape[2])
-            # )
-            # image_chunks = (
-            #     min(source_images.shape[0], max_frames_per_chunk),
-            #     source_images.shape[1],
-            #     source_images.shape[2],
-            # )
 
             images = [
                 Image(
@@ -60,16 +52,7 @@ class LocallySparseNoiseStimulusInterface(BaseDataInterface):
             # and the were only be at most hundreds of templates
             # Would go with uint16, but HDMF coerces to uint32 anyway
             natural_scenes_presentation_data = numpy.array(presentation_source["data"], dtype="uint32")
-            # max_frames_per_chunk = int(10e6 / natural_scenes_presentation_data.dtype.itemsize)
-            # natural_scenes_presentation_data_chunks = min(
-            #     natural_scenes_presentation_data.shape[0], max_frames_per_chunk
-            # )
-
             natural_scenes_presentation_timestamps = presentation_source["timestamps"][:]
-            # timestamp_chunks = min(
-            #     natural_scenes_presentation_timestamps.shape[0],
-            #     int(10e6 / natural_scenes_presentation_timestamps.dtype.itemsize),
-            # )
 
             index_series = IndexSeries(
                 name=presentation_name,

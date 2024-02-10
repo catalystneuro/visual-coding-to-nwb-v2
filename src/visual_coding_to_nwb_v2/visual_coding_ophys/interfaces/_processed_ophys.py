@@ -4,7 +4,6 @@ import h5py
 from hdmf.common import DynamicTable, VectorData
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
-from pynwb import H5DataIO
 from pynwb.file import NWBFile
 from pynwb.image import Image, Images
 from pynwb.ophys import (
@@ -25,14 +24,6 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         self.v1_nwbfile = h5py.File(name=v1_nwbfile_path, mode="r")
         super().__init__(v1_nwbfile_path=v1_nwbfile_path)
 
-    def __del__(self):
-        """
-        The HDF5 files must remain open for buffered writing (they are not read all at once into RAM).
-
-        Garbage collection should close the I/O no matter what, but doesn't hurt to additionally specify here.
-        """
-        self.v1_nwbfile.close()
-
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, stub_test: bool = False):
         ophys_module = get_module(
             nwbfile=nwbfile, name="ophys", description="Contains processed optical physiology data."
@@ -48,11 +39,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         maximum_intensity_projection_image = Image(
             name="maximum_intensity_projection",
             description="Summary image calculated from maximum intensity of the plane.",
-            data=H5DataIO(
-                maximum_intensity_projection_data,
-                chunks=tuple(maximum_intensity_projection_data.shape),
-                compression=True,
-            ),
+            data=maximum_intensity_projection_data,
         )
         reference_images = Images(
             name="SummaryImages",
@@ -118,13 +105,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         demixed_data = source_ophys_module["Fluorescence"]["imaging_plane_1_demixed_signal"]["data"][:].T
         neuropil_data = source_ophys_module["Fluorescence"]["imaging_plane_1_neuropil_response"]["data"][:].T
         corrected_fluorescence_data = source_ophys_module["Fluorescence"]["imaging_plane_1"]["data"][:].T
-
-        # All series are the same shape
-        max_frames_per_chunk = int(10e6 / (demixed_data.dtype.itemsize * demixed_data.shape[1]))
-        data_chunk_shape = (min(demixed_data.shape[0], max_frames_per_chunk), demixed_data.shape[1])
-
         timestamps = source_ophys_module["Fluorescence"]["imaging_plane_1_demixed_signal"]["timestamps"][:]
-        timestamps_chunk_shape = (min(timestamps.shape[0], int(10e6 / timestamps.dtype.itemsize)),)
 
         region_indices = list(range(number_of_rois))  # Indices into plane segmentation table that uses global IDs
         roi_table_region = plane_segmentation.create_roi_table_region(
@@ -135,15 +116,15 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         demixed_series = RoiResponseSeries(
             name="Demixed",
             description="Spatially demixed traces of potentially overlapping masks.",
-            data=H5DataIO(data=demixed_data, chunks=data_chunk_shape, compression=True),
-            timestamps=H5DataIO(data=timestamps, chunks=timestamps_chunk_shape, compression=True),
+            data=demixed_data,
+            timestamps=timestamps,
             unit="n.a.",
             rois=roi_table_region,
         )
         neuropil_series = RoiResponseSeries(
             name="Neuropil",
             description="Fluorescence contaminated by background neuropil.",
-            data=H5DataIO(data=neuropil_data, chunks=data_chunk_shape, compression=True),
+            data=neuropil_data,
             timestamps=demixed_series,  # Link timestamps
             unit="n.a.",
             rois=roi_table_region,
@@ -154,7 +135,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                 "Fluorescence per region of interest (ROI) from the raw imaging after spatial demixing and subtraction "
                 "of neuropil background, but prior to normalization."
             ),
-            data=H5DataIO(data=corrected_fluorescence_data, chunks=data_chunk_shape, compression=True),
+            data=corrected_fluorescence_data,
             timestamps=demixed_series,  # Link timestamps
             unit="n.a.",
             rois=roi_table_region,
@@ -173,17 +154,13 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         # Add dF/F
         df_over_f_data = source_ophys_module["DfOverF"]["imaging_plane_1"]["data"][:].T
 
-        # All series are the same shape
-        max_frames_per_chunk = int(10e6 / (demixed_data.dtype.itemsize * demixed_data.shape[1]))
-        data_chunk_shape = (min(demixed_data.shape[0], max_frames_per_chunk), demixed_data.shape[1])
-
         df_over_f_series = RoiResponseSeries(
             name="DfOverF",
             description=(
                 "The normalized ΔF/F trace calculated using the AllenSDK. "
                 "Please consult the AllenSDK for details of the calculation."
             ),
-            data=H5DataIO(data=df_over_f_data, chunks=data_chunk_shape, compression=True),
+            data=df_over_f_data,
             timestamps=demixed_series,  # Link timestamps
             unit="a.u.",
             rois=roi_table_region,
