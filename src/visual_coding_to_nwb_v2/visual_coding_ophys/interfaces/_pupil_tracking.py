@@ -1,4 +1,4 @@
-"""Primary class for pupil data."""
+"""Primary class for pupil tracking data."""
 
 import h5py
 from neuroconv.basedatainterface import BaseDataInterface
@@ -10,7 +10,7 @@ from pynwb.file import NWBFile
 from .shared_methods import add_eye_tracking_device
 
 
-class PupilInterface(BaseDataInterface):
+class PupilTrackingInterface(BaseDataInterface):
     """Pupil tracking interface for visual coding ophys conversion."""
 
     def __init__(self, v1_nwbfile_path: str):

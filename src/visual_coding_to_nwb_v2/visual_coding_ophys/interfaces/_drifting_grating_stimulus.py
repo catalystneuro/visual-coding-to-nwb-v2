@@ -5,7 +5,7 @@ from neuroconv.basedatainterface import BaseDataInterface
 from pynwb.file import NWBFile, TimeIntervals
 
 
-class DriftingGratingStimuliInterface(BaseDataInterface):
+class DriftingGratingStimulusInterface(BaseDataInterface):
     """Stimulus interface specific to the natural scenes for visual coding ophys conversion."""
 
     def __init__(self, v1_nwbfile_path: str):

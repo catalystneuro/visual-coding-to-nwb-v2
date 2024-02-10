@@ -1,25 +1,23 @@
 """Exposed imports for visual_coding_ophys.interfaces submodule."""
 
-from .drifting_grating_stimuli import DriftingGratingStimuliInterface
-from .epochs import EpochsInterface
-from .eye_tracking_interface import EyeTrackingInterface
-from .locally_sparse_noise_stimulus_interface import LocallySparseNoiseStimulusInterface
-from .natural_movie_stimulus_interface import NaturalMovieStimulusInterface
-from .natural_scenes_stimulus_interface import NaturalSceneStimulusInterface
-from .pupil_interface import PupilInterface
-from .running_speed_interface import RunningSpeedInterface
-from .spontaneous_stimulus import SpontaneousStimulusInterface
-from .static_grating_stimuli import StaticGratingStimuliInterface
-from .visual_coding_metadata_interface import VisualCodingMetadataInterface
-from .visual_coding_processed_ophys_interface import VisualCodingProcessedOphysInterface
-from .visual_coding_two_photon_series_interface import (
-    VisualCodingTwoPhotonSeriesInterface,
-)
+from ._drifting_grating_stimulus import DriftingGratingStimulusInterface
+from ._epochs import EpochsInterface
+from ._eye_tracking import EyeTrackingInterface
+from ._general_metadata import VisualCodingMetadataInterface
+from ._locally_sparse_noise_stimulus import LocallySparseNoiseStimulusInterface
+from ._natural_movie_stimulus import NaturalMovieStimulusInterface
+from ._natural_scenes_stimulus import NaturalSceneStimulusInterface
+from ._processed_ophys import VisualCodingProcessedOphysInterface
+from ._pupil_tracking import PupilTrackingInterface
+from ._running_speed import RunningSpeedInterface
+from ._spontaneous_stimulus import SpontaneousStimulusInterface
+from ._static_grating_stimulus import StaticGratingStimulusInterface
+from ._two_photon_series import VisualCodingTwoPhotonSeriesInterface
 
 __all__ = [
     "VisualCodingMetadataInterface",
     "EyeTrackingInterface",
-    "PupilInterface",
+    "PupilTrackingInterface",
     "RunningSpeedInterface",
     "NaturalMovieStimulusInterface",
     "NaturalSceneStimulusInterface",
@@ -27,7 +25,7 @@ __all__ = [
     "VisualCodingProcessedOphysInterface",
     "SpontaneousStimulusInterface",
     "LocallySparseNoiseStimulusInterface",
-    "StaticGratingStimuliInterface",
-    "DriftingGratingStimuliInterface",
+    "StaticGratingStimulusInterface",
+    "DriftingGratingStimulusInterface",
     "EpochsInterface",
 ]
