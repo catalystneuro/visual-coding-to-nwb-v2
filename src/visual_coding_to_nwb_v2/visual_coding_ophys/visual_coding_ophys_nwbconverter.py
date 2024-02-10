@@ -4,6 +4,7 @@ from neuroconv import NWBConverter
 
 from .interfaces import (  # VisualCodingTwoPhotonSeriesInterface,
     DriftingGratingStimuliInterface,
+    EpochsInterface,
     EyeTrackingInterface,
     LocallySparseNoiseStimulusInterface,
     NaturalMovieStimulusInterface,
@@ -33,4 +34,5 @@ class VisualCodingOphysNWBConverter(NWBConverter):
         StaticGratingStimuli=StaticGratingStimuliInterface,
         DriftingGratingStimuli=DriftingGratingStimuliInterface,
         ProcessedOphys=VisualCodingProcessedOphysInterface,
+        Epochs=EpochsInterface,
     )

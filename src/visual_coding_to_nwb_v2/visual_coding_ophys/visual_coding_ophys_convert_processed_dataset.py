@@ -1,4 +1,5 @@
 """Primary script to run to convert an entire session for of data using the NWBConverter."""
+
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from traceback import format_exc
@@ -14,7 +15,7 @@ from visual_coding_to_nwb_v2.visual_coding_ophys.visual_coding_ophys_convert_ses
 def safe_convert_session(
     session_id: str, data_folder_path: Union[str, Path], output_folder_path: Union[str, Path], stub_test: bool = False
 ):
-    """When running in paralle, traceback to stderr per worker is not captured."""
+    """When running in parallel, traceback to stderr per worker is not captured."""
     try:
         convert_session(
             session_id=session_id,
@@ -33,7 +34,7 @@ def safe_convert_session(
 if __name__ == "__main__":
     number_of_jobs = 2
 
-    data_folder_path = Path("F:/visual-coding/ophys_experiment_data")
+    data_folder_path = Path("F:/visual-coding/cache/ophys_experiment_data")
     output_folder_path = Path("F:/visual-coding/v2_nwbfiles")
     stub_test = False
 
