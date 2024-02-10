@@ -1,23 +1,22 @@
-"""Primary script to run to convert an entire session for of data using the NWBConverter."""
+"""Primary script for converting a single processed-only session of the Visual Coding - Optical Physiology dataset."""
 
-from pathlib import Path
-from typing import Union
+import pathlib
+import typing
 
-from neuroconv.tools.nwb_helpers import (
-    configure_backend,
-    get_default_backend_configuration,
-    make_or_load_nwbfile,
-)
+import neuroconv
 
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 
-def convert_session(
-    session_id: str, data_folder_path: Union[str, Path], output_folder_path: Union[str, Path], stub_test: bool = False
+def convert_processed_session(
+    session_id: str,
+    data_folder_path: typing.Union[str, pathlib.Path],
+    output_folder_path: typing.Union[str, pathlib.Path],
+    stub_test: bool = False,
 ):
     """Convert a single session of the visual coding ophys dataset."""
-    data_folder_path = Path(data_folder_path)
-    output_folder_path = Path(output_folder_path)
+    data_folder_path = pathlib.Path(data_folder_path)
+    output_folder_path = pathlib.Path(output_folder_path)
 
     if stub_test:
         output_folder_path = output_folder_path / "nwb_stub"
@@ -26,7 +25,7 @@ def convert_session(
     v1_nwbfile_path = data_folder_path / f"{session_id}.nwb"
     v2_nwbfile_path = output_folder_path / f"ses-{session_id}.nwb"
 
-    # All interfaces take the same input for this conversion
+    # All interfaces take the same common input for this conversion
     source_data = {
         key: dict(v1_nwbfile_path=str(v1_nwbfile_path)) for key in VisualCodingOphysNWBConverter.data_interface_classes
     }
@@ -40,21 +39,25 @@ def convert_session(
     converter = VisualCodingOphysNWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
 
-    with make_or_load_nwbfile(
+    with neuroconv.tools.nwb_helpers.make_or_load_nwbfile(
         nwbfile_path=v2_nwbfile_path,
         metadata=metadata,
         overwrite=True,
         verbose=True,
     ) as nwbfile:
         converter.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
-        default_backend_configuration = get_default_backend_configuration(nwbfile=nwbfile, backend="hdf5")
+        default_backend_configuration = neuroconv.tools.nwb_helpers.get_default_backend_configuration(
+            nwbfile=nwbfile, backend="hdf5"
+        )
 
-        configure_backend(nwbfile=nwbfile, backend_configuration=default_backend_configuration)
+        neuroconv.tools.nwb_helpers.configure_backend(
+            nwbfile=nwbfile, backend_configuration=default_backend_configuration
+        )
 
 
 if __name__ == "__main__":
-    data_folder_path = Path("F:/visual-coding/cache/ophys_experiment_data")
-    output_folder_path = Path("F:/visual-coding/v2_nwbfiles")
+    data_folder_path = pathlib.Path("F:/visual-coding/cache/ophys_experiment_data")
+    output_folder_path = pathlib.Path("F:/visual-coding/v2_nwbfiles")
     stub_test = False
 
     # session_id = "496908818"  # Example of natural scenes
@@ -62,7 +65,7 @@ if __name__ == "__main__":
     # session_id = "682051855"  # Example of drifting grating and spontaneous
     session_id = "496934409"  # With EyeTracking
 
-    convert_session(
+    convert_processed_session(
         session_id=session_id,
         data_folder_path=data_folder_path,
         output_folder_path=output_folder_path,

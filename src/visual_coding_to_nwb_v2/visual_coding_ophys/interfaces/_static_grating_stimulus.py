@@ -6,7 +6,7 @@ from neuroconv.basedatainterface import BaseDataInterface
 from pynwb.file import NWBFile, TimeIntervals
 
 
-class StaticGratingStimuliInterface(BaseDataInterface):
+class StaticGratingStimulusInterface(BaseDataInterface):
     """Stimulus interface specific to the natural scenes for visual coding ophys conversion."""
 
     def __init__(self, v1_nwbfile_path: str):
@@ -37,7 +37,7 @@ class StaticGratingStimuliInterface(BaseDataInterface):
                 "the grating of phase 0 lines up with the trough of phase 0.5. NaN values correspond to a blank sweep."
             ),
         )
-        static_gratings.add_column(name="is_blank_sweep ", description="Mean luminance gray image.")
+        static_gratings.add_column(name="is_blank_sweep", description="Mean luminance gray image.")
 
         duration = 0.25  # Duration of presentation was hard coded and not explicitly synchronized
         # The 'frame_start, frame_stop' are nearest interpolations of ophys frames, not to the source sampling frequency

@@ -1,18 +1,18 @@
-"""Primary NWBConverter class for this dataset."""
+"""Primary NWBConverter class for the Visual Coding - Optical Physiology dataset."""
 
 from neuroconv import NWBConverter
 
 from .interfaces import (  # VisualCodingTwoPhotonSeriesInterface,
-    DriftingGratingStimuliInterface,
+    DriftingGratingStimulusInterface,
     EpochsInterface,
     EyeTrackingInterface,
     LocallySparseNoiseStimulusInterface,
     NaturalMovieStimulusInterface,
     NaturalSceneStimulusInterface,
-    PupilInterface,
+    PupilTrackingInterface,
     RunningSpeedInterface,
     SpontaneousStimulusInterface,
-    StaticGratingStimuliInterface,
+    StaticGratingStimulusInterface,
     VisualCodingMetadataInterface,
     VisualCodingProcessedOphysInterface,
 )
@@ -25,14 +25,14 @@ class VisualCodingOphysNWBConverter(NWBConverter):
         # Raw=VisualCodingTwoPhotonSeriesInterface,
         Metadata=VisualCodingMetadataInterface,
         EyeTracking=EyeTrackingInterface,
-        Pupil=PupilInterface,
+        PupilTracking=PupilTrackingInterface,
         RunningSpeed=RunningSpeedInterface,
         NaturalMovies=NaturalMovieStimulusInterface,
         NaturalScenes=NaturalSceneStimulusInterface,
         SpontaneousStimulus=SpontaneousStimulusInterface,
         LocallySparseStimuli=LocallySparseNoiseStimulusInterface,
-        StaticGratingStimuli=StaticGratingStimuliInterface,
-        DriftingGratingStimuli=DriftingGratingStimuliInterface,
+        StaticGratingStimulus=StaticGratingStimulusInterface,
+        DriftingGratingStimulus=DriftingGratingStimulusInterface,
         ProcessedOphys=VisualCodingProcessedOphysInterface,
         Epochs=EpochsInterface,
     )
