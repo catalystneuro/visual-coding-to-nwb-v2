@@ -64,4 +64,4 @@ class StaticGratingStimuliInterface(BaseDataInterface):
                 is_blank_sweep=is_blank_sweep,
             )
 
-        nwbfile.add_stimulus(static_gratings)
+        nwbfile.add_stimulus(stimulus=static_gratings)

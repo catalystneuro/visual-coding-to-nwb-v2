@@ -60,7 +60,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             images=[maximum_intensity_projection_image],
         )
 
-        ophys_module.add(reference_images)
+        ophys_module.add(data_interfaces=[reference_images])
 
         # Fetch ophys metadata from source
         source_ophys_module = self.v1_nwbfile["processing"]["brain_observatory_pipeline"]
@@ -109,7 +109,9 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                 cell_specimen_id=cell_specimen_id,
             )
 
-        ophys_module.add(ImageSegmentation(name="ImageSegmentation", plane_segmentations=plane_segmentation))
+        ophys_module.add(
+            data_interfaces=[ImageSegmentation(name="ImageSegmentation", plane_segmentations=plane_segmentation)]
+        )
 
         # Add fluorescence, neuropil response, and demixed signal
         # Small enough to fit in RAM
@@ -166,7 +168,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                 corrected_series,
             ],
         )
-        ophys_module.add(fluorescence)
+        ophys_module.add(data_interfaces=[fluorescence])
 
         # Add dF/F
         df_over_f_data = source_ophys_module["DfOverF"]["imaging_plane_1"]["data"][:].T
@@ -188,7 +190,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         )
 
         df_over_f = DfOverF(name="DfOverF", roi_response_series=df_over_f_series)
-        ophys_module.add(df_over_f)
+        ophys_module.add(data_interfaces=[df_over_f])
 
         # Include contamination ratio
         contamination_ratio_data = source_ophys_module["Fluorescence"]["imaging_plane_1"]["r"][:]
@@ -205,7 +207,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                         "equation `RoiResponseSeriesCorrected = RoiResponseSeriesDemixed  - ratios * "
                         " RoiResponseSeriesNeuropil`."
                     ),
-                    data=H5DataIO(data=contamination_ratio_data, chunks=(number_of_rois,), compression=True),
+                    data=contamination_ratio_data,
                 ),
                 VectorData(
                     name="ratios_rmse",
@@ -215,8 +217,8 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                         "(RoiResponseSeriesDemixed - ratios * RoiResponseSeriesNeuropil)))) / "
                         " np.mean(F_M)`"
                     ),
-                    data=H5DataIO(data=contamination_ratio_mse_data, chunks=(number_of_rois,), compression=True),
+                    data=contamination_ratio_mse_data,
                 ),
             ],
         )
-        ophys_module.add(contamination_ratio_table)
+        ophys_module.add(data_interfaces=[contamination_ratio_table])

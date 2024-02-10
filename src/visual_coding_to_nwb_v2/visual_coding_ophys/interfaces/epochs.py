@@ -15,7 +15,7 @@ class EpochsInterface(BaseDataInterface):
         self.v1_nwbfile = h5py.File(name=self.source_data["v1_nwbfile_path"], mode="r")
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict):
-        with open(file=self.source_data["epochs_table_file_path"], mode="r") as io:
+        with open(file=self.source_data["epoch_table_file_path"], mode="r") as io:
             epochs_table_json = json.load(fp=io)
 
         # The 'start' and 'end' values in this JSON file are the frame indices aligned to the ophys
