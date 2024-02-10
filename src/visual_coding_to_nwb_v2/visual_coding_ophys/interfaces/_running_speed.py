@@ -3,7 +3,7 @@
 import h5py
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
-from pynwb import H5DataIO, TimeSeries
+from pynwb import TimeSeries
 from pynwb.behavior import BehavioralTimeSeries
 from pynwb.file import NWBFile
 
@@ -26,24 +26,18 @@ class RunningSpeedInterface(BaseDataInterface):
 
         # x, y grid
         running_speed_data = running_speed_source["data"][:]
-        max_frames_per_chunk = int(10e6 / running_speed_data.dtype.itemsize)
-        data_chunks = (min(running_speed_data.shape[0], max_frames_per_chunk),)
-
         running_speed_timestamps = running_speed_source["timestamps"][:]
-        timestamp_chunks = (
-            min(running_speed_timestamps.shape[0], int(10e6 / running_speed_timestamps.dtype.itemsize)),
-        )
 
         running_speed_time_series = TimeSeries(
             name="running_speed",
             description=(
-                "Velocity of the subject over time. Mice were positioned on a running disk during the imaging sessions, "
-                "and a magnetic shaft encoder (US Digital) attached to this disk recorded the running speed of the "
-                "mouse during the experiment at 60 samples per second. The running speed was down-sampled to match the "
-                "timing of the 2-photon imaging (30 Hz)."
+                "Velocity of the subject over time. Mice were positioned on a running disk during the imaging "
+                "sessions, and a magnetic shaft encoder (US Digital) attached to this disk recorded the running speed "
+                "of the mouse during the experiment at 60 samples per second. The running speed was down-sampled to "
+                "match the timing of the 2-photon imaging (30 Hz)."
             ),
-            data=H5DataIO(data=running_speed_data, compression=True, chunks=data_chunks),
-            timestamps=H5DataIO(data=running_speed_timestamps, compression=True, chunks=timestamp_chunks),
+            data=running_speed_data,
+            timestamps=running_speed_timestamps,
             unit="cm/s",  # Note, original data said 'frame' but SDK docs said 'cm/s' and did not modify source
         )
         behavioral_time_series = BehavioralTimeSeries(time_series=running_speed_time_series)

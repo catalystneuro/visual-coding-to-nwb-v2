@@ -39,7 +39,7 @@ class VisualCodingMetadataInterface(BaseDataInterface):
 Monitor was positioned 15 cm from the mouse's eye, and spanned 120 degrees x 95 degrees of visual space without accounting for stimulus warping.
 
 Each monitor was gamma corrected using a USB-650 Red Tide Spectrometer (Ocean Optics). Luminance was measured using a SpectroCAL MKII Spectroradiometer (Cambridge Research Systems). Monitors were used at a brightness setting of 30% and contrast at 50%, corresponding to mean luminance of 50 cd/m^2.
-"""
+"""  # noqa: E501
             metadata["NWBFile"]["session_description"] = session_description
 
             metadata["NWBFile"]["experiment_description"] = v1_nwbfile["general"]["For more information"][()].decode(
@@ -64,11 +64,9 @@ Each monitor was gamma corrected using a USB-650 Red Tide Spectrometer (Ocean Op
                 v1_nwbfile["general"]["subject"]["description"][()].decode("utf-8") + "."
             )
             age_string = v1_nwbfile["general"]["subject"]["age"][()].decode("utf-8")
-            days_old = age_string.split(" ")[0]  # TODO: thoroughly check consistency
+            days_old = age_string.split(" ")[0]
             metadata["Subject"]["age"] = f"P{days_old}D"
-            sex_string = v1_nwbfile["general"]["subject"]["sex"][()].decode(
-                "utf-8"
-            )  # check if any not male? or mistyped...
+            sex_string = v1_nwbfile["general"]["subject"]["sex"][()].decode("utf-8")
             metadata["Subject"]["sex"] = "M" if sex_string == "male" else "F"
             metadata["Subject"]["species"] = v1_nwbfile["general"]["subject"]["species"][()].decode("utf-8")
             metadata["Subject"]["strain"] = v1_nwbfile["general"]["specimen_name"][()].decode("utf-8")  # TODO: confirm
