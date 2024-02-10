@@ -28,7 +28,7 @@ class NaturalMovieStimulusInterface(BaseDataInterface):
         possible_template_name_map = dict(
             natural_movie_one_image_stack="natural_movie_one",
             natural_movie_two_image_stack="natural_movie_two",
-            natural_movie_three_image_stack="natural_movie_two_three",
+            natural_movie_three_image_stack="natural_movie_three",
         )
         possible_presentation_names = [
             "natural_movie_one_stimulus",

@@ -2,7 +2,7 @@
 
 import h5py
 from neuroconv.basedatainterface import BaseDataInterface
-from pynwb.file import NWBFile, TimeSeries
+from pynwb.file import NWBFile, TimeIntervals
 
 
 class SpontaneousStimulusInterface(BaseDataInterface):
@@ -18,13 +18,11 @@ class SpontaneousStimulusInterface(BaseDataInterface):
 
         spontaneous_stimulus_source = self.v1_nwbfile["stimulus"]["presentation"]["spontaneous_stimulus"]
 
-        spontaneous_stimulus = TimeSeries(
-            name="spontaneous_stimulus",
-            description="A spontaneous stimuli presented to the subject.",
-            # TODO: along with general description; have no idea how to interpret this value...
-            data=spontaneous_stimulus_source["data"][:],
-            unit="n.a.",
-            timestamps=spontaneous_stimulus_source["timestamps"][:],
-        )
+        spontaneous_stimulus = TimeIntervals(name="spontaneous_stimulus", description="Mean luminance gray image.")
+
+        # Source data alternates on/off timings; roughly 5 minutes each time
+        durations = spontaneous_stimulus_source["timestamps"][1::2] - spontaneous_stimulus_source["timestamps"][0::2]
+        for start_time, duration in zip(spontaneous_stimulus_source["timestamps"][0::2], durations):
+            spontaneous_stimulus.add_interval(start_time=start_time, stop_time=start_time + duration)
 
         nwbfile.add_stimulus(spontaneous_stimulus)

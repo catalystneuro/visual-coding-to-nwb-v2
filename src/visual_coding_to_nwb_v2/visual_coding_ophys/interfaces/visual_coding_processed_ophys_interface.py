@@ -44,16 +44,20 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         source_reference_image = source_plane_segmentation["reference_images"]
 
         # Add reference image
-        reference_image_data = source_reference_image["maximum_intensity_projection_image"]["data"][:]
-        reference_image = Image(
+        maximum_intensity_projection_data = source_reference_image["maximum_intensity_projection_image"]["data"][:]
+        maximum_intensity_projection_image = Image(
             name="maximum_intensity_projection",
             description="Summary image calculated from maximum intensity of the plane.",
-            data=H5DataIO(reference_image_data, chunks=tuple(reference_image_data.shape), compression=True),
+            data=H5DataIO(
+                maximum_intensity_projection_data,
+                chunks=tuple(maximum_intensity_projection_data.shape),
+                compression=True,
+            ),
         )
         reference_images = Images(
             name="SummaryImages",
             description="Summary images derived from the two-photon calcium imaging.",
-            images=[reference_image],
+            images=[maximum_intensity_projection_image],
         )
 
         ophys_module.add(reference_images)
@@ -71,7 +75,8 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         for local_roi_key in local_roi_keys:
             pixel_mask = source_plane_segmentation[local_roi_key]["pix_mask"][:]
             pixel_weights = source_plane_segmentation[local_roi_key]["pix_mask_weight"][:]
-            pixel_masks.append([(x, y, w) for (x, y), w in zip(pixel_mask, pixel_weights)])
+            # The pix_masks in the source data are transposed compared to their image_mask, so undo that here
+            pixel_masks.append([(y, x, w) for (x, y), w in zip(pixel_mask, pixel_weights)])
         cell_specimen_ids = source_ophys_module["ImageSegmentation"]["cell_specimen_ids"][:]
 
         # Set or fetch imaging metadata
@@ -126,7 +131,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         )
 
         demixed_series = RoiResponseSeries(
-            name="RoiResponseSeriesDemixed",
+            name="Demixed",
             description="Spatially demixed traces of potentially overlapping masks.",
             data=H5DataIO(data=demixed_data, chunks=data_chunk_shape, compression=True),
             timestamps=H5DataIO(data=timestamps, chunks=timestamps_chunk_shape, compression=True),
@@ -134,7 +139,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             rois=roi_table_region,
         )
         neuropil_series = RoiResponseSeries(
-            name="RoiResponseSeriesNeuropil",
+            name="Neuropil",
             description="Fluorescence contaminated by background neuropil.",
             data=H5DataIO(data=neuropil_data, chunks=data_chunk_shape, compression=True),
             timestamps=demixed_series,  # Link timestamps
@@ -142,7 +147,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             rois=roi_table_region,
         )
         corrected_series = RoiResponseSeries(
-            name="RoiResponseSeriesCorrected",
+            name="Corrected",
             description=(
                 "Fluorescence per region of interest (ROI) from the raw imaging after spatial demixing and subtraction "
                 "of neuropil background, but prior to normalization."
@@ -172,14 +177,17 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
 
         df_over_f_series = RoiResponseSeries(
             name="DfOverF",
-            description=("The ΔF/F trace calculated using the AllenSDK. Please consult the AllenSDK for details."),
+            description=(
+                "The normalized ΔF/F trace calculated using the AllenSDK. "
+                "Please consult the AllenSDK for details of the calculation."
+            ),
             data=H5DataIO(data=df_over_f_data, chunks=data_chunk_shape, compression=True),
             timestamps=demixed_series,  # Link timestamps
-            unit="n.a.",
+            unit="a.u.",
             rois=roi_table_region,
         )
 
-        df_over_f = DfOverF(name="DfOVerF", roi_response_series=df_over_f_series)
+        df_over_f = DfOverF(name="DfOverF", roi_response_series=df_over_f_series)
         ophys_module.add(df_over_f)
 
         # Include contamination ratio

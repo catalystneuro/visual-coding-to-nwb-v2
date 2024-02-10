@@ -31,6 +31,12 @@ def convert_session(
         key: dict(v1_nwbfile_path=str(v1_nwbfile_path)) for key in VisualCodingOphysNWBConverter.data_interface_classes
     }
 
+    epoch_table_file_path = data_folder_path.parent / "epoch_tables" / f"{session_id}.json"
+    if epoch_table_file_path.exists():
+        source_data["Epochs"].update(epoch_table_file_path=epoch_table_file_path)
+    else:
+        del source_data["Epochs"]
+
     converter = VisualCodingOphysNWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
 
@@ -47,7 +53,7 @@ def convert_session(
 
 
 if __name__ == "__main__":
-    data_folder_path = Path("F:/visual-coding/ophys_experiment_data")
+    data_folder_path = Path("F:/visual-coding/cache/ophys_experiment_data")
     output_folder_path = Path("F:/visual-coding/v2_nwbfiles")
     stub_test = False
 

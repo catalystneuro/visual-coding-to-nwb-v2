@@ -1,6 +1,7 @@
 """Exposed imports for visual_coding_ophys.interfaces submodule."""
 
 from .drifting_grating_stimuli import DriftingGratingStimuliInterface
+from .epochs import EpochsInterface
 from .eye_tracking_interface import EyeTrackingInterface
 from .locally_sparse_noise_stimulus_interface import LocallySparseNoiseStimulusInterface
 from .natural_movie_stimulus_interface import NaturalMovieStimulusInterface
@@ -28,4 +29,5 @@ __all__ = [
     "LocallySparseNoiseStimulusInterface",
     "StaticGratingStimuliInterface",
     "DriftingGratingStimuliInterface",
+    "EpochsInterface",
 ]
