@@ -33,7 +33,7 @@ def convert_session(
 
     epoch_table_file_path = data_folder_path.parent / "epoch_tables" / f"{session_id}.json"
     if epoch_table_file_path.exists():
-        source_data["Epochs"].update(epoch_table_file_path=epoch_table_file_path)
+        source_data["Epochs"].update(epoch_table_file_path=str(epoch_table_file_path))
     else:
         del source_data["Epochs"]
 
@@ -59,7 +59,8 @@ if __name__ == "__main__":
 
     # session_id = "496908818"  # Example of natural scenes
     # session_id = "679697901"  # Example of locally sparse
-    session_id = "682051855"  # Example of drifting grating and spontaneous
+    # session_id = "682051855"  # Example of drifting grating and spontaneous
+    session_id = "496934409"  # With EyeTracking
 
     convert_session(
         session_id=session_id,

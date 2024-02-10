@@ -37,14 +37,14 @@ class DriftingGratingStimuliInterface(BaseDataInterface):
             name="temporal_frequency_in_hz",
             description="The speed at which the grating moves in Hz. NaN values correspond to a blank sweep.",
         )
-        drifting_gratings.add_column(name="is_blank_sweep ", description="Mean luminance gray image.")
+        drifting_gratings.add_column(name="is_blank_sweep", description="Mean luminance gray image.")
 
         duration = 2.0  # Duration of presentation was hard coded and not explicitly synchronized
         # The 'frame_start, frame_stop' are nearest interpolations of ophys frames, not the to source sampling frequency
         for (
             timestamp,
             (frame_start, frame_stop),
-            (temporal_frequency_in_hz, orientation_in_degrees, blank_sweep),
+            (temporal_frequency_in_hz, orientation_in_degrees, is_blank_sweep),
         ) in zip(
             drifting_gratings_source["timestamps"][:],
             drifting_gratings_source["frame_duration"][:],
@@ -58,7 +58,7 @@ class DriftingGratingStimuliInterface(BaseDataInterface):
                 # Attached for consistency, description, and to show that it could have in principle varied.
                 spatial_frequency_in_cycles_per_degree=0.04,
                 temporal_frequency_in_hz=temporal_frequency_in_hz,
-                blank_sweep=blank_sweep,
+                is_blank_sweep=bool(is_blank_sweep),
             )
 
-        nwbfile.add_stimulus(drifting_gratings)
+        nwbfile.add_stimulus(stimulus=drifting_gratings)

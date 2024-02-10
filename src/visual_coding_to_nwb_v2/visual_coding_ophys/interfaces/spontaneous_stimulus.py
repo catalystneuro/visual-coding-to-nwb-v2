@@ -25,4 +25,4 @@ class SpontaneousStimulusInterface(BaseDataInterface):
         for start_time, duration in zip(spontaneous_stimulus_source["timestamps"][0::2], durations):
             spontaneous_stimulus.add_interval(start_time=start_time, stop_time=start_time + duration)
 
-        nwbfile.add_stimulus(spontaneous_stimulus)
+        nwbfile.add_stimulus(stimulus=spontaneous_stimulus)

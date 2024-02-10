@@ -24,11 +24,11 @@ def safe_convert_session(
             stub_test=stub_test,
         )
     except Exception as exception:
-        log_folder_path = output_folder_path.parent / "logs"
+        log_folder_path = output_folder_path / "logs"
         log_folder_path.mkdir(exist_ok=True)
 
         with open(file=log_folder_path / f"{session_id}.txt", mode="w") as io:
-            io.write(f"{type(exception): str(exceeption)\n{format_exc()}}")
+            io.write(f"{type(exception)}: {str(exception)}\n{format_exc()}")
 
 
 if __name__ == "__main__":
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
             futures.append(
                 executor.submit(
-                    convert_session,
+                    safe_convert_session,
                     session_id=session_id,
                     data_folder_path=data_folder_path,
                     output_folder_path=output_folder_path,
