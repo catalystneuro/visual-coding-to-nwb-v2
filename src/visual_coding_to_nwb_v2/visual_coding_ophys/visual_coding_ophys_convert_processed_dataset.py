@@ -7,7 +7,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import tqdm
 
-import visual_coding_to_nwb_v2
+from visual_coding_to_nwb_v2.visual_coding_ophys import convert_processed_session
 
 
 def safe_convert_processed_session(
@@ -15,10 +15,10 @@ def safe_convert_processed_session(
     data_folder_path: typing.Union[str, pathlib.Path],
     output_folder_path: typing.Union[str, pathlib.Path],
     stub_test: bool = False,
-):
+) -> None:
     """When running in parallel, traceback to stderr per worker is not captured."""
     try:
-        visual_coding_to_nwb_v2.visual_coding_ophys.convert_processed_session(
+        convert_processed_session(
             session_id=session_id,
             data_folder_path=data_folder_path,
             output_folder_path=output_folder_path,
@@ -33,7 +33,7 @@ def safe_convert_processed_session(
 
 
 if __name__ == "__main__":
-    number_of_jobs = 2
+    number_of_jobs = 4
 
     data_folder_path = pathlib.Path("F:/visual-coding/cache/ophys_experiment_data")
     output_folder_path = pathlib.Path("F:/visual-coding/v2_nwbfiles")
