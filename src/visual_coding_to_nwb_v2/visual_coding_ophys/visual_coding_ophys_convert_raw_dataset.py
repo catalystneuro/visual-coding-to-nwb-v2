@@ -15,6 +15,7 @@ def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> Li
     completed_session_ids = [x.name.removeprefix("completed_").removesuffix(".txt") for x in completed_file_paths]
     return completed_session_ids
 
+
 def _clean_past_sessions(base_folder_path: Union[str, pathlib.Path]):
     base_folder_path = pathlib.Path(base_folder_path)
 
