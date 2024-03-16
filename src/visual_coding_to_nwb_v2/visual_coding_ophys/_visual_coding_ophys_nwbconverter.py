@@ -15,6 +15,7 @@ from .interfaces import (  # VisualCodingTwoPhotonSeriesInterface,
     StaticGratingStimulusInterface,
     VisualCodingMetadataInterface,
     VisualCodingProcessedOphysInterface,
+    VisualCodingTwoPhotonSeriesInterface,
 )
 
 
@@ -22,7 +23,7 @@ class VisualCodingOphysNWBConverter(NWBConverter):
     """Primary conversion class for this dataset."""
 
     data_interface_classes = dict(
-        # Raw=VisualCodingTwoPhotonSeriesInterface,
+        TwoPhotonSeries=VisualCodingTwoPhotonSeriesInterface,
         Metadata=VisualCodingMetadataInterface,
         EyeTracking=EyeTrackingInterface,
         PupilTracking=PupilTrackingInterface,

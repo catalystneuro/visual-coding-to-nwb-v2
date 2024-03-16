@@ -50,8 +50,6 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         ophys_module.add(data_interfaces=[reference_images])
 
         # Fetch ophys metadata from source
-        source_ophys_module = self.v1_nwbfile["processing"]["brain_observatory_pipeline"]
-
         global_roi_ids = [int(roi_id.decode("utf-8")) for roi_id in source_ophys_module["ImageSegmentation"]["roi_ids"]]
         local_roi_keys = [
             roi_id.decode("utf-8") for roi_id in source_ophys_module["Fluorescence"]["imaging_plane_1"]["roi_names"][:]
@@ -102,10 +100,10 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
 
         # Add fluorescence, neuropil response, and demixed signal
         # Small enough to fit in RAM
-        demixed_data = source_ophys_module["Fluorescence"]["imaging_plane_1_demixed_signal"]["data"][:].T
+
         neuropil_data = source_ophys_module["Fluorescence"]["imaging_plane_1_neuropil_response"]["data"][:].T
         corrected_fluorescence_data = source_ophys_module["Fluorescence"]["imaging_plane_1"]["data"][:].T
-        timestamps = source_ophys_module["Fluorescence"]["imaging_plane_1_demixed_signal"]["timestamps"][:]
+        timestamps = source_ophys_module["Fluorescence"]["imaging_plane_1"]["timestamps"][:]
 
         region_indices = list(range(number_of_rois))  # Indices into plane segmentation table that uses global IDs
         roi_table_region = plane_segmentation.create_roi_table_region(
@@ -113,10 +111,13 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             description="The regions of interest (ROIs) this response series refers to.",
         )
 
-        demixed_series = RoiResponseSeries(
-            name="Demixed",
-            description="Spatially demixed traces of potentially overlapping masks.",
-            data=demixed_data,
+        corrected_series = RoiResponseSeries(
+            name="Corrected",
+            description=(
+                "Fluorescence per region of interest (ROI) from the raw imaging after spatial demixing and subtraction "
+                "of neuropil background, but prior to dF/F normalization."
+            ),
+            data=corrected_fluorescence_data,
             timestamps=timestamps,
             unit="n.a.",
             rois=roi_table_region,
@@ -125,30 +126,27 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             name="Neuropil",
             description="Fluorescence contaminated by background neuropil.",
             data=neuropil_data,
-            timestamps=demixed_series,  # Link timestamps
-            unit="n.a.",
-            rois=roi_table_region,
-        )
-        corrected_series = RoiResponseSeries(
-            name="Corrected",
-            description=(
-                "Fluorescence per region of interest (ROI) from the raw imaging after spatial demixing and subtraction "
-                "of neuropil background, but prior to normalization."
-            ),
-            data=corrected_fluorescence_data,
-            timestamps=demixed_series,  # Link timestamps
+            timestamps=corrected_series,  # Link timestamps
             unit="n.a.",
             rois=roi_table_region,
         )
 
-        fluorescence = Fluorescence(
-            name="Fluorescence",
-            roi_response_series=[
-                demixed_series,
-                neuropil_series,
-                corrected_series,
-            ],
-        )
+        roi_response_series = [neuropil_series, corrected_series]
+
+        # Demixed is occasionally missing; e.g., session ID 507691476
+        if "imaging_plane_1_demixed_signal" in source_ophys_module["Fluorescence"]:
+            demixed_data = source_ophys_module["Fluorescence"]["imaging_plane_1_demixed_signal"]["data"][:].T
+            demixed_series = RoiResponseSeries(
+                name="Demixed",
+                description="Spatially demixed traces of potentially overlapping masks.",
+                data=demixed_data,
+                timestamps=corrected_series,  # Link timestamps
+                unit="n.a.",
+                rois=roi_table_region,
+            )
+            roi_response_series.append(demixed_series)
+
+        fluorescence = Fluorescence(name="Fluorescence", roi_response_series=roi_response_series)
         ophys_module.add(data_interfaces=[fluorescence])
 
         # Add dF/F
@@ -161,7 +159,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
                 "Please consult the AllenSDK for details of the calculation."
             ),
             data=df_over_f_data,
-            timestamps=demixed_series,  # Link timestamps
+            timestamps=corrected_series,  # Link timestamps
             unit="a.u.",
             rois=roi_table_region,
         )

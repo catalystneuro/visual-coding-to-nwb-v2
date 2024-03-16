@@ -10,46 +10,41 @@ from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConv
 
 def convert_processed_session(
     session_id: str,
-    data_folder_path: typing.Union[str, pathlib.Path],
+    processed_data_folder_path: typing.Union[str, pathlib.Path],
+    raw_data_folder_path: typing.Union[str, pathlib.Path],
     output_folder_path: typing.Union[str, pathlib.Path],
     stub_test: bool = False,
 ) -> None:
     """Convert a single session of the visual coding ophys dataset."""
-    data_folder_path = pathlib.Path(data_folder_path)
+    processed_data_folder_path = pathlib.Path(processed_data_folder_path)
+    raw_data_folder_path = pathlib.Path(raw_data_folder_path)
     output_folder_path = pathlib.Path(output_folder_path)
 
     if stub_test:
         output_folder_path = output_folder_path / "nwb_stub"
     output_folder_path.mkdir(parents=True, exist_ok=True)
 
-    v1_nwbfile_path = data_folder_path / f"{session_id}.nwb"
-    v2_nwbfile_path = output_folder_path / f"ses-{session_id}.nwb"
+    v1_nwbfile_path = processed_data_folder_path / f"{session_id}.nwb"
+    ophys_movie_file_path = raw_data_folder_path / f"ophys_experiment_{session_id}.h5"
 
-    # Temporary: skip
-    if v2_nwbfile_path.exists():
-        return
+    v2_nwbfile_path = output_folder_path / f"ses-{session_id}_desc-raw.nwb"
 
-    # All interfaces take the same common input for this conversion
-    source_data = {
-        key: dict(v1_nwbfile_path=str(v1_nwbfile_path)) for key in VisualCodingOphysNWBConverter.data_interface_classes
-    }
-
-    epoch_table_file_path = data_folder_path.parent / "epoch_tables" / f"{session_id}.json"
-    if epoch_table_file_path.exists():
-        source_data["Epochs"].update(epoch_table_file_path=str(epoch_table_file_path))
-    else:
-        del source_data["Epochs"]
+    source_data = dict(
+        TwoPhotonSeries=dict(v1_nwbfile_path=str(v1_nwbfile_path), ophys_movie_file_path=str(ophys_movie_file_path)),
+        Metadata=dict(v1_nwbfile_path=str(v1_nwbfile_path)),
+    )
 
     converter = VisualCodingOphysNWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
 
+    conversion_options = dict(TwoPhotonSeries=dict(stub_test=stub_test))
     with neuroconv.tools.nwb_helpers.make_or_load_nwbfile(
         nwbfile_path=v2_nwbfile_path,
         metadata=metadata,
         overwrite=True,
-        verbose=True,
+        verbose=False,
     ) as nwbfile:
-        converter.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
+        converter.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata, conversion_options=conversion_options)
         default_backend_configuration = neuroconv.tools.nwb_helpers.get_default_backend_configuration(
             nwbfile=nwbfile, backend="hdf5"
         )
@@ -60,19 +55,17 @@ def convert_processed_session(
 
 
 if __name__ == "__main__":
-    data_folder_path = pathlib.Path("F:/visual-coding/cache/ophys_experiment_data")
-    output_folder_path = pathlib.Path("F:/visual-coding/v2_nwbfiles")
+    processed_data_folder_path = pathlib.Path("F:/visual_coding/cache/ophys_experiment_data")
+    raw_data_folder_path = pathlib.Path("F:/visual_coding/ophys_movies")
+    output_folder_path = pathlib.Path("F:/visual_coding/v2_nwbfiles")
     stub_test = False
 
-    # session_id = "496908818"  # Example of natural scenes
-    # session_id = "679697901"  # Example of locally sparse
-    # session_id = "682051855"  # Example of drifting grating and spontaneous
-    # session_id = "501004031"  # With EyeTracking
-    session_id = "507691476"  # Investigate missing demixed source
+    session_id = "571099190"
 
     convert_processed_session(
         session_id=session_id,
-        data_folder_path=data_folder_path,
+        processed_data_folder_path=processed_data_folder_path,
+        raw_data_folder_path=raw_data_folder_path,
         output_folder_path=output_folder_path,
         stub_test=stub_test,
     )
