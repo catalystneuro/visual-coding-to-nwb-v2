@@ -1,6 +1,7 @@
 """Script for parallel conversion of multiple processed sessions of the Visual Coding - Optical Physiology dataset."""
 
 import json
+import os
 import pathlib
 import subprocess
 import traceback
@@ -31,29 +32,32 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
     Also, deploying using subprocesses as a way to more easily release file handles for cleanup.
     """
-    try:
-        subprocess.run(["python", "visual_coding_ophys_convert_raw_session.py", session_id, base_folder_path])
-    except Exception as exception:
-        log_folder_path = base_folder_path / "logs"
-        log_folder_path.mkdir(exist_ok=True)
+    base_folder_path = pathlib.Path(base_folder_path)
 
-        with open(file=log_folder_path / f"{session_id}.txt", mode="w") as io:
-            io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
+    _clean_past_sessions(base_folder_path=base_folder_path)
+
+    subprocess.run(
+        ["python", "visual_coding_ophys_download_convert_and_upload_raw_session.py", session_id, base_folder_path]
+    )
 
 
 if __name__ == "__main__":
+    assert "DANDI_API_KEY" in os.environ
+    import dandi  # to ensure installation before upload attempt
+
     number_of_jobs = 1
 
-    # session_ids_file_path = "/home/jovyan/visual_coding/session_ids.json"
-    session_ids_file_path = "C:/Users/Raven/Downloads/session_ids.json"
-    with open(file=session_ids_file_path, mode="r") as fp:
-        session_ids = json.load(fp=fp)
+    base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
 
-    base_folder_path = pathlib.Path("F:/visual_coding/test")
+    session_ids_file_path = base_folder_path / "session_ids.json"
+    with open(file=session_ids_file_path, mode="r") as fp:
+        all_session_ids = json.load(fp=fp)
 
     futures = list()
+    completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
+    uncompleted_session_ids = list(set(all_session_ids) - set(completed_session_ids))
     with ProcessPoolExecutor(max_workers=number_of_jobs) as executor:
-        for session_id in session_ids:
+        for session_id in uncompleted_session_ids:
             futures.append(
                 executor.submit(_safe_convert_raw_session, session_id=session_id, base_folder_path=base_folder_path)
             )

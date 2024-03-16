@@ -24,8 +24,10 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
 
         Garbage collection should close the I/O no matter what, but doesn't hurt to additionally specify here.
         """
-        self.v1_nwbfile.close()
-        self.ophys_movie.close()
+        if hasattr(self, "v1_nwbfile"):
+            self.v1_nwbfile.close()
+        if hasattr(self, "ophys_movie"):
+            self.ophys_movie.close()
 
     def add_to_nwbfile(self, nwbfile: pynwb.NWBFile, metadata: dict, stub_test: bool = False):
         ophys_data = self.ophys_movie["data"]
