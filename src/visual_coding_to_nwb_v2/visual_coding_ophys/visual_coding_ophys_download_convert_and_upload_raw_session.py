@@ -24,33 +24,35 @@ def download_convert_and_upload_processed_session(
     completed_subfolder = base_folder_path / "completed"
     completed_file = completed_subfolder / f"completed_{session_id}.txt"
 
-    session_source_subfolder = session_subfolder / "source_data"
-    session_source_subfolder.mkdir(exist_ok=True, parents=True)
-    v1_nwbfile_path = session_subfolder / f"{session_id}.nwb"
-    ophys_movie_file_path = session_subfolder / f"ophys_experiment_{session_id}.h5"
+    source_subfolder = session_subfolder / "source_data"
+    source_subfolder.mkdir(exist_ok=True, parents=True)
+    v1_nwbfile_path = source_subfolder / f"{session_id}.nwb"
+    ophys_movie_file_path = source_subfolder / f"ophys_experiment_{session_id}.h5"
 
     output_subfolder = session_subfolder / "v2_nwbfile"
     output_subfolder.mkdir(exist_ok=True, parents=True)
     v2_nwbfile_path = output_subfolder / f"ses-{session_id}_desc-raw.nwb"
 
-    subprocess.run(
-        [
-            "aws",
-            "s3",
-            "cp",
-            f"s3://allen-brain-observatory/visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
-            session_source_subfolder.absolute(),
-        ]
-    )
-    subprocess.run(
-        [
-            "aws",
-            "s3",
-            "cp",
-            f"s3://allen-brain-observatory/visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
-            session_source_subfolder.absolute(),
-        ]
-    )
+    if not v1_nwbfile_path.exists():
+        subprocess.run(
+            [
+                "aws",
+                "s3",
+                "cp",
+                f"s3://allen-brain-observatory/visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
+                source_subfolder.absolute(),
+            ]
+        )
+    if not ophys_movie_file_path.exists():
+        subprocess.run(
+            [
+                "aws",
+                "s3",
+                "cp",
+                f"s3://allen-brain-observatory/visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
+                source_subfolder.absolute(),
+            ]
+        )
 
     source_data = dict(
         TwoPhotonSeries=dict(v1_nwbfile_path=str(v1_nwbfile_path), ophys_movie_file_path=str(ophys_movie_file_path)),
@@ -75,6 +77,8 @@ def download_convert_and_upload_processed_session(
     automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
 
     completed_file.touch()
+
+    subprocess.run(["rm", "-rf", session_subfolder.absolute()])
 
 
 if __name__ == "__main__":
