@@ -4,24 +4,27 @@ import json
 import pathlib
 import subprocess
 import traceback
-import typing
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import List, Union
 
 import tqdm
 
 
-def _clean_past_sessions(base_folder_path: typing.Union[str, pathlib.Path]):
-    base_folder_path = pathlib.Path(base_folder_path)
-
+def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
     completed_file_paths = list(base_folder_path.rglob("completed_*.txt"))
     completed_session_ids = [x.name.removeprefix("completed_").removesuffix(".txt") for x in completed_file_paths]
+    return completed_session_ids
 
+def _clean_past_sessions(base_folder_path: Union[str, pathlib.Path]):
+    base_folder_path = pathlib.Path(base_folder_path)
+
+    completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
     for completed_session_id in completed_session_ids:
         session_subfolder = base_folder_path / completed_session_id
         subprocess.run(["rm", "-rf", session_subfolder.absolute()])
 
 
-def _safe_convert_raw_session(session_id: str, base_folder_path: typing.Union[str, pathlib.Path]):
+def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, pathlib.Path]):
     """
     When running in parallel, traceback to stderr per worker is not captured.
 
