@@ -18,6 +18,7 @@ def download_convert_and_upload_processed_session(
 ) -> None:
     """Convert a single session of the visual coding ophys dataset."""
     assert "DANDI_API_KEY" in os.environ
+    import dandi  # To ensure installation before upload attempt
 
     try:
         base_folder_path = pathlib.Path(base_folder_path)
@@ -69,9 +70,7 @@ def download_convert_and_upload_processed_session(
         with neuroconv.tools.nwb_helpers.make_or_load_nwbfile(
             nwbfile_path=v2_nwbfile_path, metadata=metadata, overwrite=True, verbose=False
         ) as nwbfile:
-            converter.add_to_nwbfile(
-                nwbfile=nwbfile, metadata=metadata, conversion_options=dict(TwoPhotonSeries=dict(stub_test=True))
-            )
+            converter.add_to_nwbfile(nwbfile=nwbfile, metadata=metadata)
             default_backend_configuration = neuroconv.tools.nwb_helpers.get_default_backend_configuration(
                 nwbfile=nwbfile, backend="hdf5"
             )

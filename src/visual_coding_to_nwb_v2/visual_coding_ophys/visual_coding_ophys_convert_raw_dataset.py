@@ -3,6 +3,7 @@
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -25,6 +26,11 @@ def _clean_past_sessions(base_folder_path: Union[str, pathlib.Path]):
         session_subfolder = base_folder_path / completed_session_id
         subprocess.run(["rm", "-rf", session_subfolder.absolute()])
 
+    # remove empty folders too
+    for folder_path in base_folder_path.iterdir():
+        if folder_path.is_dir() and len(list(folder_path.iterdir())) == 0:
+            shutil.rmtree(path=folder_path)
+
 
 def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, pathlib.Path]):
     """
@@ -43,9 +49,9 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
 if __name__ == "__main__":
     assert "DANDI_API_KEY" in os.environ
-    import dandi  # to ensure installation before upload attempt
+    import dandi  # To ensure installation before upload attempt
 
-    number_of_jobs = 1
+    number_of_jobs = 4
 
     base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
 
