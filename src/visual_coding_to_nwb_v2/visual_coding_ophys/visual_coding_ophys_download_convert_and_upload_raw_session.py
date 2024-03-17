@@ -25,6 +25,7 @@ def download_convert_and_upload_processed_session(
 
         session_subfolder = base_folder_path / session_id
         completed_subfolder = base_folder_path / "completed"
+        completed_subfolder.mkdir(exist_ok=True)
         completed_file = completed_subfolder / f"completed_{session_id}.txt"
 
         source_subfolder = session_subfolder / "source_data"
@@ -44,6 +45,7 @@ def download_convert_and_upload_processed_session(
                     "cp",
                     f"s3://allen-brain-observatory/visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
                     source_subfolder.absolute(),
+                    "--quiet",
                 ]
             )
         if not ophys_movie_file_path.exists():
@@ -54,6 +56,7 @@ def download_convert_and_upload_processed_session(
                     "cp",
                     f"s3://allen-brain-observatory/visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
                     source_subfolder.absolute(),
+                    "--quiet",
                 ]
             )
 
@@ -83,7 +86,8 @@ def download_convert_and_upload_processed_session(
 
         automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
 
-        completed_file.touch()
+        with open(file=completed_file, mode="w") as io:
+            io.write("")
     except Exception as exception:
         log_folder_path = base_folder_path / "logs"
         log_folder_path.mkdir(exist_ok=True)

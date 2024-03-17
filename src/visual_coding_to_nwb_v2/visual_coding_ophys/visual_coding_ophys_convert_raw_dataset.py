@@ -51,7 +51,7 @@ if __name__ == "__main__":
     assert "DANDI_API_KEY" in os.environ
     import dandi  # To ensure installation before upload attempt
 
-    number_of_jobs = 4
+    number_of_jobs = 2
 
     base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
 
