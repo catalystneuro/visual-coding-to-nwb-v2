@@ -10,6 +10,7 @@ from typing import List, Union
 
 import natsort
 import tqdm
+from neuroconv.tools.processes import deploy_process
 
 
 def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
@@ -42,8 +43,8 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
     _clean_past_sessions(base_folder_path=base_folder_path)
 
-    subprocess.run(
-        ["python", "visual_coding_ophys_download_convert_and_upload_raw_session.py", session_id, base_folder_path]
+    deploy_process(
+        command="python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
     )
 
 
