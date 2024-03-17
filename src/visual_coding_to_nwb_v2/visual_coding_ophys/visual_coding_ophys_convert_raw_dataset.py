@@ -25,12 +25,12 @@ def _clean_past_sessions(base_folder_path: Union[str, pathlib.Path]):
     completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
     for completed_session_id in completed_session_ids:
         session_subfolder = base_folder_path / completed_session_id
-        shutil.rmtree(path=session_subfolder)
+        shutil.rmtree(path=session_subfolder, ignore_errors=True)
 
     # remove empty folders too
     for folder_path in base_folder_path.iterdir():
         if folder_path.is_dir() and len(list(folder_path.iterdir())) == 0:
-            shutil.rmtree(path=folder_path)
+            shutil.rmtree(path=folder_path, ignore_errors=True)
 
 
 def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, pathlib.Path]):
@@ -44,7 +44,7 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
     _clean_past_sessions(base_folder_path=base_folder_path)
 
     deploy_process(
-        command="python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
+        command=f"python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
     )
 
 

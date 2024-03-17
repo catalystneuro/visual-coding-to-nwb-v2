@@ -83,7 +83,7 @@ def download_convert_and_upload_processed_session(
                 nwbfile=nwbfile, backend_configuration=default_backend_configuration
             )
 
-        shutil.rmtree(path=source_subfolder)
+        shutil.rmtree(path=source_subfolder, ignore_errors=True)
 
         automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
 
@@ -95,7 +95,7 @@ def download_convert_and_upload_processed_session(
         with open(file=log_folder_path / f"logs_{session_id}.txt", mode="w") as io:
             io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
     finally:  # In the event of error, or when done, try to clean up for first time
-        shutil.rmtree(path=session_subfolder)
+        shutil.rmtree(path=session_subfolder, ignore_errors=True)
 
 
 if __name__ == "__main__":
