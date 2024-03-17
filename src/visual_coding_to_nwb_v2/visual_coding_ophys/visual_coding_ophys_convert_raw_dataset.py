@@ -5,10 +5,10 @@ import os
 import pathlib
 import shutil
 import subprocess
-import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import List, Union
 
+import natsort
 import tqdm
 
 
@@ -24,7 +24,7 @@ def _clean_past_sessions(base_folder_path: Union[str, pathlib.Path]):
     completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
     for completed_session_id in completed_session_ids:
         session_subfolder = base_folder_path / completed_session_id
-        subprocess.run(["rm", "-rf", session_subfolder.absolute()])
+        shutil.rmtree(path=session_subfolder)
 
     # remove empty folders too
     for folder_path in base_folder_path.iterdir():
@@ -49,11 +49,12 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
 if __name__ == "__main__":
     assert "DANDI_API_KEY" in os.environ
-    import dandi  # To ensure installation before upload attempt
+    import dandi  # noqa: To ensure installation before upload attempt
 
-    number_of_jobs = 2
+    number_of_jobs = 1
 
-    base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
+    # base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
+    base_folder_path = pathlib.Path("G:/visual_coding")
 
     session_ids_file_path = base_folder_path / "session_ids.json"
     with open(file=session_ids_file_path, mode="r") as fp:
@@ -61,7 +62,7 @@ if __name__ == "__main__":
 
     futures = list()
     completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
-    uncompleted_session_ids = list(set(all_session_ids) - set(completed_session_ids))
+    uncompleted_session_ids = natsort.natsorted(list(set(all_session_ids) - set(completed_session_ids)))[:759]
     with ProcessPoolExecutor(max_workers=number_of_jobs) as executor:
         for session_id in uncompleted_session_ids:
             futures.append(

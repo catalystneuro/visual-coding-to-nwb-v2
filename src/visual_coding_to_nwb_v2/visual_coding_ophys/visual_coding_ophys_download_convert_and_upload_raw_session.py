@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import traceback
@@ -18,7 +19,7 @@ def download_convert_and_upload_processed_session(
 ) -> None:
     """Convert a single session of the visual coding ophys dataset."""
     assert "DANDI_API_KEY" in os.environ
-    import dandi  # To ensure installation before upload attempt
+    import dandi  # noqa: To ensure installation before upload attempt
 
     try:
         base_folder_path = pathlib.Path(base_folder_path)
@@ -82,7 +83,7 @@ def download_convert_and_upload_processed_session(
                 nwbfile=nwbfile, backend_configuration=default_backend_configuration
             )
 
-        subprocess.run(["rm", "-rf", source_subfolder.absolute()])
+        shutil.rmtree(path=source_subfolder)
 
         automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
 
@@ -94,7 +95,7 @@ def download_convert_and_upload_processed_session(
         with open(file=log_folder_path / f"logs_{session_id}.txt", mode="w") as io:
             io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
     finally:  # In the event of error, or when done, try to clean up for first time
-        subprocess.run(["rm", "-rf", session_subfolder.absolute()])
+        shutil.rmtree(path=session_subfolder)
 
 
 if __name__ == "__main__":
