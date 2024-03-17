@@ -1,3 +1,5 @@
 neuroconv
 packaging  # for some reason
 dandi
+boto3  # not sure why this isn't anywhere else
+neuroconv @ git+https://github.com/catalystneuro/neuroconv.git@5e0d847eb17e0202a4af8385568edc697e1de324

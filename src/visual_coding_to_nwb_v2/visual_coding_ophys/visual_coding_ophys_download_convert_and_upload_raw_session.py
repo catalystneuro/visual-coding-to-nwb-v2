@@ -8,6 +8,7 @@ import sys
 import traceback
 import typing
 
+import boto3
 import neuroconv
 from neuroconv.tools.data_transfers import automatic_dandi_upload
 
@@ -39,26 +40,19 @@ def download_convert_and_upload_processed_session(
         v2_nwbfile_path = output_subfolder / f"ses-{session_id}_desc-raw.nwb"
 
         if not v1_nwbfile_path.exists():
-            subprocess.run(
-                [
-                    "aws",
-                    "s3",
-                    "cp",
-                    f"s3://allen-brain-observatory/visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
-                    source_subfolder.absolute(),
-                    "--quiet",
-                ]
+            s3 = boto3.resource("s3", region_name="us-west-2")
+            bucket = s3.Bucket(name="allen-brain-observatory")
+            bucket.download_file(
+                Key=f"visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
+                Filename=source_subfolder / v1_nwbfile_path.name,
             )
+
         if not ophys_movie_file_path.exists():
-            subprocess.run(
-                [
-                    "aws",
-                    "s3",
-                    "cp",
-                    f"s3://allen-brain-observatory/visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
-                    source_subfolder.absolute(),
-                    "--quiet",
-                ]
+            s3 = boto3.resource("s3", region_name="us-west-2")
+            bucket = s3.Bucket(name="allen-brain-observatory")
+            bucket.download_file(
+                Key=f"visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
+                Filename=source_subfolder / ophys_movie_file_path.name,
             )
 
         source_data = dict(
