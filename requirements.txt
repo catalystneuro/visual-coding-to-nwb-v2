@@ -1,4 +1,3 @@
-neuroconv
 packaging  # for some reason
 dandi
 boto3  # not sure why this isn't anywhere else

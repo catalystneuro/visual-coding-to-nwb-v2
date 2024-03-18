@@ -13,7 +13,7 @@ import tqdm
 from neuroconv.tools.processes import deploy_process
 
 from visual_coding_to_nwb_v2.visual_coding_ophys import (
-    download_convert_and_upload_processed_session,
+    safe_download_convert_and_upload_raw_session,
 )
 
 
@@ -47,10 +47,7 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
     _clean_past_sessions(base_folder_path=base_folder_path)
 
-    download_convert_and_upload_processed_session(session_id=session_id, base_folder_path=base_folder_path)
-    # deploy_process(
-    #    command=f"python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
-    # )
+    safe_download_convert_and_upload_raw_session(session_id=session_id, base_folder_path=base_folder_path)
 
 
 if __name__ == "__main__":

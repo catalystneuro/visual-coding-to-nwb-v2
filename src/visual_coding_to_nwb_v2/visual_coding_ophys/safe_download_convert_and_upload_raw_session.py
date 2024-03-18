@@ -15,8 +15,10 @@ from neuroconv.tools.data_transfers import automatic_dandi_upload
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 
-def download_convert_and_upload_processed_session(
-    session_id: str, base_folder_path: typing.Union[str, pathlib.Path]
+def safe_download_convert_and_upload_raw_session(
+    session_id: str,
+    base_folder_path: typing.Union[str, pathlib.Path],
+    log: bool = True,
 ) -> None:
     """Convert a single session of the visual coding ophys dataset."""
     assert "DANDI_API_KEY" in os.environ
@@ -84,10 +86,13 @@ def download_convert_and_upload_processed_session(
         with open(file=completed_file, mode="w") as io:
             io.write("")
     except Exception as exception:
-        log_folder_path = base_folder_path / "logs"
-        log_folder_path.mkdir(exist_ok=True)
-        with open(file=log_folder_path / f"logs_{session_id}.txt", mode="w") as io:
-            io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
+        if log:
+            log_folder_path = base_folder_path / "logs"
+            log_folder_path.mkdir(exist_ok=True)
+            with open(file=log_folder_path / f"logs_{session_id}.txt", mode="w") as io:
+                io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
+        else:
+            raise exception
     finally:  # In the event of error, or when done, try to clean up for first time
         shutil.rmtree(path=session_subfolder, ignore_errors=True)
 
@@ -101,7 +106,7 @@ if __name__ == "__main__":
         session_id = sys.argv[1]
         base_folder_path = sys.argv[2]
 
-    download_convert_and_upload_processed_session(
+    safe_download_convert_and_upload_raw_session(
         session_id=session_id,
         base_folder_path=base_folder_path,
     )
