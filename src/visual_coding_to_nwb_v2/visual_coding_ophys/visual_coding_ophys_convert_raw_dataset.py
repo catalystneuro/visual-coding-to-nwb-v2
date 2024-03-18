@@ -12,6 +12,10 @@ import natsort
 import tqdm
 from neuroconv.tools.processes import deploy_process
 
+from visual_coding_to_nwb_v2.visual_coding_ophys import (
+    download_convert_and_upload_processed_session,
+)
+
 
 def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
     completed_file_paths = list(base_folder_path.rglob("completed_*.txt"))
@@ -43,9 +47,10 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
     _clean_past_sessions(base_folder_path=base_folder_path)
 
-    deploy_process(
-        command=f"python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
-    )
+    download_convert_and_upload_processed_session(session_id=session_id, base_folder_path=base_folder_path)
+    # deploy_process(
+    #    command=f"python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
+    # )
 
 
 if __name__ == "__main__":
@@ -56,7 +61,7 @@ if __name__ == "__main__":
 
     if "jovyan" in str(pathlib.Path.cwd()):
         base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
-        slice_range = slice(759, 760)
+        slice_range = slice(759, None)
     else:
         base_folder_path = pathlib.Path("G:/visual_coding")
         slice_range = slice(0, 759)
