@@ -1,3 +1,4 @@
 neuroconv
 packaging  # for some reason
 dandi
+pynwb @ git+https://github.com/neurodatawithoutborders/pynwb.git@nwb-schema-2.7.0

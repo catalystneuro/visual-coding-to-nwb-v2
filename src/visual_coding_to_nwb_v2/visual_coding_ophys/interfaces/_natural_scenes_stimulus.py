@@ -25,29 +25,17 @@ class NaturalSceneStimulusInterface(BaseDataInterface):
         # Original data was in float32 for some reason, even though data values were uint8
         # Data should always be able to fit into RAM
         source_images = numpy.array(natural_scenes_template_source["data"], dtype="uint8")
-        # max_frames_per_chunk = int(
-        #     10e6 / (source_images.dtype.itemsize * source_images.shape[1] * source_images.shape[2])
-        # )
-        # image_chunks = (
-        #     min(source_images.shape[0], max_frames_per_chunk),
-        #     source_images.shape[1],
-        #     source_images.shape[2],
-        # )
-
-        # Writing each image as a separate stack is pretty inefficient for data access
-        # (streaming would need lots of requests, each is a small chunk; < 1 MB)
-        # TODO: make as single array in extension
         images = [
             Image(
                 name=f"NaturalScene{image_index}",
-                description="A natural scene presented to the subject.",
+                description="A natural scene presented to the subject. Lasted for exactly 7 frames.",
                 data=source_images[image_index, :, :],
             )
             for image_index in range(source_images.shape[0])
         ]
         all_images = Images(
             name="natural_scenes_template",
-            description="A collection of natural scenes presented to the subject.",
+            description="A collection of natural scenes presented to the subject. Lasted for exactly 7 frames.",
             images=images,
         )
         nwbfile.add_stimulus_template(all_images)

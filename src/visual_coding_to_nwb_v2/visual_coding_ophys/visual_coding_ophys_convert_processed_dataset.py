@@ -33,10 +33,10 @@ def safe_convert_processed_session(
 
 
 if __name__ == "__main__":
-    number_of_jobs = 4
+    number_of_jobs = 3
 
-    data_folder_path = pathlib.Path("F:/visual-coding/cache/ophys_experiment_data")
-    output_folder_path = pathlib.Path("F:/visual-coding/v2_nwbfiles")
+    data_folder_path = pathlib.Path("F:/visual_coding/cache/ophys_experiment_data")
+    output_folder_path = pathlib.Path("F:/visual_coding/v2_nwbfiles")
     stub_test = False
 
     futures = list()
