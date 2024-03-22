@@ -34,12 +34,12 @@ for session_id in session_ids:
         stim_epoch = data_set.get_stimulus_epoch_table()
         stim_epoch_json = {column_name: stim_epoch[column_name].values.tolist() for column_name in stim_epoch}
 
-        with open(file=epoch_table_file_path, mode="w") as io:
-            json.dump(obj=stim_epoch_json, fp=io, indent=4)
+        with open(file=epoch_table_file_path, mode="w") as fp:
+            json.dump(obj=stim_epoch_json, fp=fp, indent=4)
     except Exception as exception:
         # Cannot figure out how to properly import this error class...
         if type(exception).__name__ == "EpochSeparationException":
             print(f"Skipping session {session_id} due to problem calculating epochs table!")
             continue
         else:
-            raise Exception
+            raise exception
