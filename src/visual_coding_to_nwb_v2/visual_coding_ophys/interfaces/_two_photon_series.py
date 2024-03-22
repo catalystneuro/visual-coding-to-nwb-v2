@@ -50,7 +50,9 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
                 "Refer to the 'MotionCorrectionShiftsPerFrame' series to see how each frame was shifted."
             ),
             data=SliceableDataChunkIterator(
-                data=ophys_data[:10, ...] if stub_test else ophys_data, display_progress=True
+                data=ophys_data[:10, ...] if stub_test else ophys_data,
+                display_progress=True,
+                progress_bar_options=dict(position=1),
             ),
             imaging_plane=imaging_plane,
             unit="n.a.",

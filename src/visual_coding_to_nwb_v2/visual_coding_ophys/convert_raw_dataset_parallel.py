@@ -12,6 +12,10 @@ import natsort
 import tqdm
 from neuroconv.tools.processes import deploy_process
 
+from visual_coding_to_nwb_v2.visual_coding_ophys import (
+    safe_download_convert_and_upload_raw_session,
+)
+
 
 def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
     completed_file_paths = list(base_folder_path.rglob("completed_*.txt"))
@@ -43,9 +47,7 @@ def _safe_convert_raw_session(session_id: str, base_folder_path: Union[str, path
 
     _clean_past_sessions(base_folder_path=base_folder_path)
 
-    deploy_process(
-        command=f"python visual_coding_ophys_download_convert_and_upload_raw_session.py {session_id} {base_folder_path}"
-    )
+    safe_download_convert_and_upload_raw_session(session_id=session_id, base_folder_path=base_folder_path)
 
 
 if __name__ == "__main__":
@@ -54,8 +56,12 @@ if __name__ == "__main__":
 
     number_of_jobs = 1
 
-    # base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
-    base_folder_path = pathlib.Path("G:/visual_coding")
+    if "jovyan" in str(pathlib.Path.cwd()):
+        base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
+        slice_range = slice(759, None)
+    else:
+        base_folder_path = pathlib.Path("G:/visual_coding")
+        slice_range = slice(0, 759)
 
     session_ids_file_path = base_folder_path / "session_ids.json"
     with open(file=session_ids_file_path, mode="r") as fp:
@@ -63,7 +69,7 @@ if __name__ == "__main__":
 
     futures = list()
     completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
-    uncompleted_session_ids = natsort.natsorted(list(set(all_session_ids) - set(completed_session_ids)))[:759]
+    uncompleted_session_ids = natsort.natsorted(list(set(all_session_ids) - set(completed_session_ids)))[slice_range]
     with ProcessPoolExecutor(max_workers=number_of_jobs) as executor:
         for session_id in uncompleted_session_ids:
             futures.append(
