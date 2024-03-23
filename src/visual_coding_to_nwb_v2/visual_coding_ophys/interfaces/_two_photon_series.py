@@ -24,8 +24,10 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
 
         Garbage collection should close the I/O no matter what, but doesn't hurt to additionally specify here.
         """
-        self.v1_nwbfile.close()
-        self.ophys_movie.close()
+        if hasattr(self, "v1_nwbfile"):
+            self.v1_nwbfile.close()
+        if hasattr(self, "ophys_movie"):
+            self.ophys_movie.close()
 
     def add_to_nwbfile(self, nwbfile: pynwb.NWBFile, metadata: dict, stub_test: bool = False):
         ophys_data = self.ophys_movie["data"]
@@ -41,15 +43,35 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
         )
         imaging_plane = nwbfile.imaging_planes["ImagingPlane"]
 
+        chunk_mb = 10.0
+        maxshape = ophys_data.shape
+        num_frames = maxshape[0]
+        width = maxshape[1]
+        height = maxshape[2]
+
+        dtype = ophys_data.dtype
+        frame_size_bytes = width * height * dtype.itemsize
+        chunk_size_bytes = chunk_mb * 1e6
+        num_frames_per_chunk = int(chunk_size_bytes / frame_size_bytes)
+
+        chunk_shape = (max(min(num_frames_per_chunk, num_frames), 1), width, height)
+        buffer_shape = (max(min(num_frames_per_chunk * 50, num_frames), 1), width, height)
+
+        data_iterator = SliceableDataChunkIterator(
+            data=ophys_data[:10, ...] if stub_test else ophys_data,
+            display_progress=True,
+            progress_bar_options=dict(position=1),
+            chunk_shape=chunk_shape,
+            buffer_shape=buffer_shape,
+        )
+
         two_photon_series = TwoPhotonSeries(
             name="MotionCorrectedTwoPhotonSeries",
             description=(
                 "Motion corrected flourescence from calcium imaging recording. "
                 "Refer to the 'MotionCorrectionShiftsPerFrame' series to see how each frame was shifted."
             ),
-            data=SliceableDataChunkIterator(
-                data=ophys_data[:10, ...] if stub_test else ophys_data, display_progress=True
-            ),
+            data=data_iterator,
             imaging_plane=imaging_plane,
             unit="n.a.",
             timestamps=SliceableDataChunkIterator(
@@ -59,15 +81,16 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
         nwbfile.add_acquisition(two_photon_series)
 
         motion_correction = self.v1_nwbfile["processing"]["brain_observatory_pipeline"]["MotionCorrection"]
+        # Either 'x' is 'height' and 'y' is 'width', or the imaging data is saved as height x width (hard to tell)
+        # Either way, flipping this here so it makes more sense one-to-one with axis indices
+        xy_translation_data = numpy.flip(motion_correction["2p_image_series"]["xy_translation"]["data"][:, :], axis=1)
         xy_translation = pynwb.TimeSeries(
             name="MotionCorrectionShiftsPerFrame",
             description=(
                 "The continuous column (first value of the second axis) and row (second value of second axis) shifts"
                 "estimated by motion correction. Actual pixel shifts per axis are the nearest integer to these values."
             ),
-            # Either 'x' is 'height' and 'y' is 'width', or the imaging data is saved as height x width (hard to tell)
-            # Either way, transposing this here so it makes more sense one-to-one with axis indices
-            data=motion_correction["2p_image_series"]["xy_translation"]["data"][:].T,
+            data=xy_translation_data[:10, ...] if stub_test else xy_translation_data,
             unit="n.a.",
             timestamps=two_photon_series,
         )

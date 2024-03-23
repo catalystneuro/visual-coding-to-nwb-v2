@@ -1,6 +1,9 @@
 """Primary class for two photon series."""
 
+from typing import Union
+
 import h5py
+import numpy
 from hdmf.common import DynamicTable, VectorData
 from neuroconv.basedatainterface import BaseDataInterface
 from neuroconv.tools.nwb_helpers import get_module
@@ -20,9 +23,10 @@ from .shared_methods import add_imaging_device, add_imaging_plane
 class VisualCodingProcessedOphysInterface(BaseDataInterface):
     """Two photon calcium imaging interface for visual coding ophys conversion."""
 
-    def __init__(self, v1_nwbfile_path: str):
+    def __init__(self, v1_nwbfile_path: str, df_over_f_events_file_path: Union[str, None] = None):
         self.v1_nwbfile = h5py.File(name=v1_nwbfile_path, mode="r")
-        super().__init__(v1_nwbfile_path=v1_nwbfile_path)
+        self.df_over_f_events_file_path = df_over_f_events_file_path
+        super().__init__(v1_nwbfile_path=v1_nwbfile_path, df_over_f_events_file_path=df_over_f_events_file_path)
 
     def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, stub_test: bool = False):
         ophys_module = get_module(
@@ -50,11 +54,11 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
         ophys_module.add(data_interfaces=[reference_images])
 
         # Fetch ophys metadata from source
-        global_roi_ids = [int(roi_id.decode("utf-8")) for roi_id in source_ophys_module["ImageSegmentation"]["roi_ids"]]
+        local_roi_ids = [int(roi_id.decode("utf-8")) for roi_id in source_ophys_module["ImageSegmentation"]["roi_ids"]]
         local_roi_keys = [
             roi_id.decode("utf-8") for roi_id in source_ophys_module["Fluorescence"]["imaging_plane_1"]["roi_names"][:]
         ]
-        number_of_rois = len(global_roi_ids)
+        number_of_rois = len(local_roi_ids)
 
         pixel_masks = list()
         for local_roi_key in local_roi_keys:
@@ -62,7 +66,7 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             pixel_weights = source_plane_segmentation[local_roi_key]["pix_mask_weight"][:]
             # The pix_masks in the source data are transposed compared to their image_mask, so undo that here
             pixel_masks.append([(y, x, w) for (x, y), w in zip(pixel_mask, pixel_weights)])
-        cell_specimen_ids = source_ophys_module["ImageSegmentation"]["cell_specimen_ids"][:]
+        global_roi_ids = source_ophys_module["ImageSegmentation"]["cell_specimen_ids"][:]
 
         # Set or fetch imaging metadata
         if "Microscope" not in nwbfile.devices:
@@ -84,14 +88,14 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             # reference_images=reference_images,  # Only supports linking ImageSeries; to be fixed in ndx-microscopy
         )
         plane_segmentation.add_column(
-            name="cell_specimen_id", description="The ID assigned to each unique cell specimen."
+            name="global_roi_id", description="The global ID assigned to each unique ROI across sessions."
         )
 
-        for global_roi_id, pixel_mask, cell_specimen_id in zip(global_roi_ids, pixel_masks, cell_specimen_ids):
+        for global_roi_id, pixel_mask, global_roi_id in zip(local_roi_ids, pixel_masks, global_roi_ids):
             plane_segmentation.add_roi(
                 id=global_roi_id,
                 pixel_mask=pixel_mask,
-                cell_specimen_id=cell_specimen_id,
+                global_roi_id=global_roi_id,
             )
 
         ophys_module.add(
@@ -164,7 +168,27 @@ class VisualCodingProcessedOphysInterface(BaseDataInterface):
             rois=roi_table_region,
         )
 
-        df_over_f = DfOverF(name="DfOverF", roi_response_series=df_over_f_series)
+        all_df_over_f_series = [df_over_f_series]
+
+        # Add dF/F events
+        if self.df_over_f_events_file_path is not None:
+            df_over_f_events_data = numpy.load(file=self.df_over_f_events_file_path)
+
+            df_over_f_event_series = RoiResponseSeries(
+                name="DfOverFEvents",
+                description=(
+                    "Events from the ΔF/F detected using the L0 method from the AllenSDK. "
+                    "Please consult the AllenSDK for more details of the calculation."
+                ),
+                data=df_over_f_events_data,
+                timestamps=corrected_series,  # Link timestamps
+                unit="a.u.",
+                rois=roi_table_region,
+            )
+
+            all_df_over_f_series.append(df_over_f_event_series)
+
+        df_over_f = DfOverF(name="DfOverF", roi_response_series=all_df_over_f_series)
         ophys_module.add(data_interfaces=[df_over_f])
 
         # Include contamination ratio

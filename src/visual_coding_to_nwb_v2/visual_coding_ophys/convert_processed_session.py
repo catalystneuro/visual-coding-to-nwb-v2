@@ -31,7 +31,8 @@ def convert_processed_session(
 
     # All interfaces take the same common input for this conversion
     source_data = {
-        key: dict(v1_nwbfile_path=str(v1_nwbfile_path)) for key in VisualCodingOphysNWBConverter.data_interface_classes
+        key: dict(v1_nwbfile_path=str(v1_nwbfile_path))
+        for key in set(VisualCodingOphysNWBConverter.data_interface_classes) - set(["TwoPhotonSeries"])
     }
 
     epoch_table_file_path = data_folder_path.parent / "epoch_tables" / f"{session_id}.json"
@@ -39,6 +40,10 @@ def convert_processed_session(
         source_data["Epochs"].update(epoch_table_file_path=str(epoch_table_file_path))
     else:
         del source_data["Epochs"]
+
+    df_over_f_events_file_path = data_folder_path.parent / "df_over_f_events" / f"{session_id}.npy"
+    if df_over_f_events_file_path.exists():
+        source_data["ProcessedOphys"].update(df_over_f_events_file_path=str(df_over_f_events_file_path))
 
     converter = VisualCodingOphysNWBConverter(source_data=source_data)
     metadata = converter.get_metadata()
@@ -60,8 +65,8 @@ def convert_processed_session(
 
 
 if __name__ == "__main__":
-    data_folder_path = pathlib.Path("F:/visual-coding/cache/ophys_experiment_data")
-    output_folder_path = pathlib.Path("F:/visual-coding/v2_nwbfiles")
+    data_folder_path = pathlib.Path("F:/visual_coding/cache/ophys_experiment_data")
+    output_folder_path = pathlib.Path("F:/visual_coding/v2_nwbfiles")
     stub_test = False
 
     # session_id = "496908818"  # Example of natural scenes
