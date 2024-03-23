@@ -98,13 +98,13 @@ def safe_download_convert_and_upload_raw_session(
         else:
             raise exception
     finally:  # In the event of error, or when done, try to clean up for first time
-    shutil.rmtree(path=session_subfolder, ignore_errors=True)
+        shutil.rmtree(path=session_subfolder, ignore_errors=True)
 
 
 if __name__ == "__main__":
-    session_id = "501559087"
-    base_folder_path = pathlib.Path("G:/visual_coding")
-    # base_folder_path = pathlib.Path("/home/jovyan/visual_coding/")
+    session_id = "712919679"
+    # base_folder_path = pathlib.Path("F:/visual_coding/test")
+    base_folder_path = pathlib.Path("/home/jovyan/visual_coding/")
 
     if len(sys.argv) > 1:  # CLI usage
         session_id = sys.argv[1]
