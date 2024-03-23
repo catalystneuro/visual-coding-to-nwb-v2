@@ -83,7 +83,7 @@ def safe_download_convert_and_upload_raw_session(
                 nwbfile=nwbfile, backend_configuration=default_backend_configuration
             )
 
-        # shutil.rmtree(path=source_subfolder, ignore_errors=True)
+        shutil.rmtree(path=source_subfolder, ignore_errors=True)
 
         automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
 
@@ -97,8 +97,8 @@ def safe_download_convert_and_upload_raw_session(
                 io.write(f"{type(exception)}: {str(exception)}\n{traceback.format_exc()}")
         else:
             raise exception
-    # finally:  # In the event of error, or when done, try to clean up for first time
-    # shutil.rmtree(path=session_subfolder, ignore_errors=True)
+    finally:  # In the event of error, or when done, try to clean up for first time
+    shutil.rmtree(path=session_subfolder, ignore_errors=True)
 
 
 if __name__ == "__main__":
