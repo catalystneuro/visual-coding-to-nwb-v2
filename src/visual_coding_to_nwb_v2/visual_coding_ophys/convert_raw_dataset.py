@@ -43,7 +43,7 @@ if __name__ == "__main__":
         base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
         slice_range = slice(759, None)
     else:
-        base_folder_path = pathlib.Path("G:/visual_coding")
+        base_folder_path = pathlib.Path("E:/visual_coding")
         slice_range = slice(0, 759)
 
     session_ids_file_path = base_folder_path / "session_ids.json"

@@ -41,6 +41,10 @@ def safe_download_convert_and_upload_raw_session(
         output_subfolder.mkdir(exist_ok=True, parents=True)
         v2_nwbfile_path = output_subfolder / f"ses-{session_id}_desc-raw.nwb"
 
+        if v2_nwbfile_path.exists():
+            automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
+            return
+
         if not v1_nwbfile_path.exists():
             s3 = boto3.resource("s3", region_name="us-west-2")
             bucket = s3.Bucket(name="allen-brain-observatory")
@@ -109,4 +113,5 @@ if __name__ == "__main__":
     safe_download_convert_and_upload_raw_session(
         session_id=session_id,
         base_folder_path=base_folder_path,
+        log=False,
     )
