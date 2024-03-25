@@ -3,7 +3,7 @@ In the October 2018 data release, they added an AllenSDK method for additional d
 
 In particular, this is for 'events' identified from the DFOverF traces using an L0 method.
 
-Note that not all sessions have events classified. XYZ sessions have it.
+Note that not all sessions have events classified. 1413 sessions have it.
 """
 
 import pathlib
