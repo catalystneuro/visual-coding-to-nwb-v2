@@ -62,9 +62,18 @@ if __name__ == "__main__":
         base_folder_path = pathlib.Path("F:/visual_coding/raw")
         slice_range = slice(1_000, None)
 
-    session_ids_file_path = base_folder_path / "session_ids.json"
-    with open(file=session_ids_file_path, mode="r") as fp:
-        all_session_ids = json.load(fp=fp)
+    # session_ids_file_path = base_folder_path / "session_ids.json"
+    # with open(file=session_ids_file_path, mode="r") as fp:
+    #     all_session_ids = json.load(fp=fp)
+
+    client = DandiAPIClient()
+
+    dandiset_id = "000728"
+    dandiset = client.get_dandiset(dandiset_id=dandiset_id)
+
+    all_session_ids = [
+        asset.path.split("_")[1].split("-")[1] for asset in dandiset.get_assets() if "behavior" in asset.path
+    ]
 
     completed_session_ids = _get_completed_session_ids(base_folder_path=base_folder_path)
     uncompleted_session_ids = natsort.natsorted(list(set(all_session_ids) - set(completed_session_ids)))[slice_range]
