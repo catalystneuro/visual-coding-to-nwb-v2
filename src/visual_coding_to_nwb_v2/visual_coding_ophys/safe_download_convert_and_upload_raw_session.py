@@ -3,10 +3,10 @@
 import os
 import pathlib
 import shutil
-import subprocess
 import sys
+import time
 import traceback
-import typing
+from typing import Union
 
 import boto3
 import neuroconv
@@ -15,10 +15,19 @@ from neuroconv.tools.data_transfers import automatic_dandi_upload
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
 
 
+def _check_for_pause(pause_file_path: Union[pathlib.Path, None] = None) -> None:
+    if pause_file_path is None:
+        return
+
+    while pause_file_path.exists():
+        time.sleep(60)
+
+
 def safe_download_convert_and_upload_raw_session(
     session_id: str,
-    base_folder_path: typing.Union[str, pathlib.Path],
+    base_folder_path: Union[str, pathlib.Path],
     log: bool = True,
+    pause_file_path: Union[pathlib.Path, None] = None,
 ) -> None:
     """Convert a single session of the visual coding ophys dataset."""
     assert "DANDI_API_KEY" in os.environ
@@ -28,9 +37,6 @@ def safe_download_convert_and_upload_raw_session(
         base_folder_path = pathlib.Path(base_folder_path)
 
         session_subfolder = base_folder_path / session_id
-        completed_subfolder = base_folder_path / "completed"
-        completed_subfolder.mkdir(exist_ok=True)
-        completed_file = completed_subfolder / f"completed_{session_id}.txt"
 
         source_subfolder = session_subfolder / "source_data"
         source_subfolder.mkdir(exist_ok=True, parents=True)
@@ -40,6 +46,8 @@ def safe_download_convert_and_upload_raw_session(
         output_subfolder = session_subfolder / "v2_nwbfile"
         output_subfolder.mkdir(exist_ok=True, parents=True)
         v2_nwbfile_path = output_subfolder / f"ses-{session_id}_desc-raw.nwb"
+
+        _check_for_pause(pause_file_path=pause_file_path)
 
         if v2_nwbfile_path.exists():
             automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
@@ -60,6 +68,8 @@ def safe_download_convert_and_upload_raw_session(
                 Key=f"visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
                 Filename=source_subfolder / ophys_movie_file_path.name,
             )
+
+        _check_for_pause(pause_file_path=pause_file_path)
 
         source_data = dict(
             TwoPhotonSeries=dict(
@@ -85,10 +95,9 @@ def safe_download_convert_and_upload_raw_session(
 
         shutil.rmtree(path=source_subfolder, ignore_errors=True)
 
-        automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
+        _check_for_pause(pause_file_path=pause_file_path)
 
-        with open(file=completed_file, mode="w") as io:
-            io.write("")
+        automatic_dandi_upload(dandiset_id="000728", nwb_folder_path=output_subfolder)
     except Exception as exception:
         if log:
             log_folder_path = base_folder_path / "logs"

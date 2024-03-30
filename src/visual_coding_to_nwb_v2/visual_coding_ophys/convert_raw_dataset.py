@@ -1,6 +1,5 @@
 """Script for parallel conversion of multiple processed sessions of the Visual Coding - Optical Physiology dataset."""
 
-import json
 import os
 import pathlib
 import shutil
@@ -16,10 +15,6 @@ from visual_coding_to_nwb_v2.visual_coding_ophys import (
 
 
 def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
-    # Previous implementation using local files
-    # completed_file_paths = list(base_folder_path.rglob("completed_*.txt"))
-    # completed_session_ids = [x.name.removeprefix("completed_").removesuffix(".txt") for x in completed_file_paths]
-
     client = DandiAPIClient()
 
     dandiset_id = "000728"
@@ -53,6 +48,8 @@ if __name__ == "__main__":
         base_folder_path = pathlib.Path("/home/jovyan/visual_coding")
         slice_range = slice(759, None)
     else:
+        pause_file_path = pathlib.Path("G:/visual_coding/pause.txt")
+
         # base_folder_path = pathlib.Path("G:/visual_coding")
         # slice_range = slice(0, 500)
 
@@ -61,10 +58,6 @@ if __name__ == "__main__":
 
         base_folder_path = pathlib.Path("F:/visual_coding/raw")
         slice_range = slice(1_000, None)
-
-    # session_ids_file_path = base_folder_path / "session_ids.json"
-    # with open(file=session_ids_file_path, mode="r") as fp:
-    #     all_session_ids = json.load(fp=fp)
 
     client = DandiAPIClient()
 
