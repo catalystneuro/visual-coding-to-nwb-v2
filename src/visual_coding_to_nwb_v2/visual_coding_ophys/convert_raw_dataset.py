@@ -51,13 +51,16 @@ if __name__ == "__main__":
         pause_file_path = pathlib.Path("G:/visual_coding/pause.txt")
 
         # base_folder_path = pathlib.Path("G:/visual_coding")
-        # slice_range = slice(0, 500)
+        # slice_range = slice(0, 150)
 
         # base_folder_path = pathlib.Path("E:/visual_coding")
-        # slice_range = slice(500, 1_000)
+        # slice_range = slice(150, 300)
 
-        base_folder_path = pathlib.Path("F:/visual_coding/raw")
-        slice_range = slice(1_000, None)
+        # base_folder_path = pathlib.Path("F:/visual_coding/raw")
+        # slice_range = slice(300, 450)
+
+        base_folder_path = pathlib.Path("D:/visual_coding")
+        slice_range = slice(450, 600)
 
     client = DandiAPIClient()
 
