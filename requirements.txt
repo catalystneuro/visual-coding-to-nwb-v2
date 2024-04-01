@@ -1,5 +1,5 @@
 packaging  # for some reason
 dandi
-pynwb @ git+https://github.com/neurodatawithoutborders/pynwb.git@nwb-schema-2.7.0
+pynwb @ git+https://github.com/neurodatawithoutborders/pynwb.git@8ebd8dbbde4d81dae747573f6f685552fa552e96
 boto3  # not sure why this isn't anywhere else
 neuroconv @ git+https://github.com/catalystneuro/neuroconv.git@5e0d847eb17e0202a4af8385568edc697e1de324
