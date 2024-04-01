@@ -10,6 +10,8 @@ from typing import Union
 
 import boto3
 import neuroconv
+from botocore import UNSIGNED
+from botocore.client import Config
 from neuroconv.tools.data_transfers import automatic_dandi_upload
 
 from visual_coding_to_nwb_v2.visual_coding_ophys import VisualCodingOphysNWBConverter
@@ -54,7 +56,7 @@ def safe_download_convert_and_upload_raw_session(
             return
 
         if not v1_nwbfile_path.exists():
-            s3 = boto3.resource("s3", region_name="us-west-2")
+            s3 = boto3.resource("s3", region_name="us-west-2", config=Config(signature_version=UNSIGNED))
             bucket = s3.Bucket(name="allen-brain-observatory")
             bucket.download_file(
                 Key=f"visual-coding-2p/ophys_experiment_data/{v1_nwbfile_path.name}",
@@ -62,7 +64,7 @@ def safe_download_convert_and_upload_raw_session(
             )
 
         if not ophys_movie_file_path.exists():
-            s3 = boto3.resource("s3", region_name="us-west-2")
+            s3 = boto3.resource("s3", region_name="us-west-2", config=Config(signature_version=UNSIGNED))
             bucket = s3.Bucket(name="allen-brain-observatory")
             bucket.download_file(
                 Key=f"visual-coding-2p/ophys_movies/{ophys_movie_file_path.name}",
