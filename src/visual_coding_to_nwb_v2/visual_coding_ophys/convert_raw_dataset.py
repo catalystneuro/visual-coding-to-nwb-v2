@@ -56,11 +56,11 @@ if __name__ == "__main__":
         # base_folder_path = pathlib.Path("E:/visual_coding")
         # slice_range = slice(150, 300)
 
-        # base_folder_path = pathlib.Path("F:/visual_coding/raw")
-        # slice_range = slice(300, 450)
+        base_folder_path = pathlib.Path("F:/visual_coding/raw")
+        slice_range = slice(300, 450)
 
-        base_folder_path = pathlib.Path("D:/visual_coding")
-        slice_range = slice(450, 600)
+        # base_folder_path = pathlib.Path("D:/visual_coding")
+        # slice_range = slice(450, 600)
 
     client = DandiAPIClient()
 
@@ -80,5 +80,8 @@ if __name__ == "__main__":
     ):
         _clean_past_sessions(base_folder_path=base_folder_path)
         safe_download_convert_and_upload_raw_session(
-            session_id=uncompleted_session_id, base_folder_path=base_folder_path, log=False
+            session_id=uncompleted_session_id,
+            base_folder_path=base_folder_path,
+            log=False,
+            pause_file_path=pause_file_path,
         )
