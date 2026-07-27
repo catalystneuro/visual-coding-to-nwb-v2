@@ -14,15 +14,32 @@ from visual_coding_to_nwb_v2.visual_coding_ophys import (
 )
 
 
+# A full session of raw two-photon data is at minimum ~32 GB; a `stub_test=True` file is ~3 MB.
+# Anything below this is a partial upload and must be converted again rather than skipped.
+MINIMUM_RAW_ASSET_SIZE = 1_000_000_000
+
+
 def _get_completed_session_ids(base_folder_path: Union[str, pathlib.Path]) -> List[str]:
     client = DandiAPIClient()
 
     dandiset_id = "000728"
     dandiset = client.get_dandiset(dandiset_id=dandiset_id)
 
-    completed_session_ids = [
-        asset.path.split("_")[1].split("-")[1] for asset in dandiset.get_assets() if "behavior" not in asset.path
-    ]
+    # A session counts as completed only if its raw asset is plausibly the full recording. Keying off
+    # mere presence let a 10-frame stub of session 712919679 mask the real conversion indefinitely.
+    # See https://github.com/dandi/helpdesk/discussions/209
+    completed_session_ids = []
+    for asset in dandiset.get_assets():
+        if "behavior" in asset.path:
+            continue
+        session_id = asset.path.split("_")[1].split("-")[1]
+        if asset.size < MINIMUM_RAW_ASSET_SIZE:
+            print(
+                f"Raw asset for session {session_id} is only {asset.size / 1e6:.2f} MB "
+                f"({asset.path}); treating it as incomplete and re-converting."
+            )
+            continue
+        completed_session_ids.append(session_id)
 
     return completed_session_ids
 
