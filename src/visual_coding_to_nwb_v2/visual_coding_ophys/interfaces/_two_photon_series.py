@@ -43,13 +43,17 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
         )
         imaging_plane = nwbfile.imaging_planes["ImagingPlane"]
 
+        # Derive the shape from the data actually being written, not from the full movie; otherwise
+        # `stub_test=True` builds a 19-frame chunk over 10 frames of data and hdmf raises.
+        data_to_write = ophys_data[:10, ...] if stub_test else ophys_data
+
         chunk_mb = 10.0
-        maxshape = ophys_data.shape
+        maxshape = data_to_write.shape
         num_frames = maxshape[0]
         width = maxshape[1]
         height = maxshape[2]
 
-        dtype = ophys_data.dtype
+        dtype = data_to_write.dtype
         frame_size_bytes = width * height * dtype.itemsize
         chunk_size_bytes = chunk_mb * 1e6
         num_frames_per_chunk = int(chunk_size_bytes / frame_size_bytes)
@@ -58,7 +62,7 @@ class VisualCodingTwoPhotonSeriesInterface(BaseDataInterface):
         buffer_shape = (max(min(num_frames_per_chunk * 50, num_frames), 1), width, height)
 
         data_iterator = SliceableDataChunkIterator(
-            data=ophys_data[:10, ...] if stub_test else ophys_data,
+            data=data_to_write,
             display_progress=True,
             progress_bar_options=dict(position=1),
             chunk_shape=chunk_shape,
